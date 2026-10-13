@@ -4,6 +4,10 @@ name: HDL CI
 on:
   push:
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   hdl-ci:
@@ -18,11 +22,15 @@ jobs:
           - windows-latest
 
     steps:
+      # --------------------------------------------------
+      # Checkout repository
+      # --------------------------------------------------
+
       - name: Checkout
         uses: actions/checkout@v4
 
       # --------------------------------------------------
-      # Install tools
+      # Install HDL tools
       # --------------------------------------------------
 
       - name: Install HDL tools (Ubuntu)
@@ -31,13 +39,23 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y verilator iverilog
 
-      - name: Install HDL tools (Windows)
+      - name: Install Verilator (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          choco install verilator iverilog -y --no-progress
+          choco install verilator -y --no-progress
 
-      - name: Verify tool installation
+      - name: Install Icarus Verilog (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          choco install iverilog -y --no-progress
+
+      # --------------------------------------------------
+      # Verify tool installation
+      # --------------------------------------------------
+
+      - name: Verify HDL tools
         shell: pwsh
         run: |
           verilator --version
@@ -45,47 +63,57 @@ jobs:
           vvp -V
 
       # --------------------------------------------------
-      # Discover HDL source files
+      # Discover design source files
       # --------------------------------------------------
 
-      - name: Find HDL files
+      - name: Find HDL source files
         shell: pwsh
         run: |
-          $files = Get-ChildItem -Path . -Recurse -File |
-            Where-Object {
-              $_.Extension -in @(".v", ".sv") -and
-              $_.FullName -notmatch '[\\/]\.git[\\/]'
-            }
-
-          if (-not $files) {
-            throw "No Verilog/SystemVerilog files found."
+          if (-not (Test-Path "src")) {
+            throw "Missing src directory."
           }
 
-          $files | ForEach-Object {
-            $_.FullName
-          } | Set-Content -Encoding utf8 hdl_files.txt
+          $sources = @(
+            Get-ChildItem src -Recurse -File |
+              Where-Object {
+                $_.Extension -in @(".v", ".sv")
+              } |
+              ForEach-Object {
+                $_.FullName
+              }
+          )
 
-          Write-Host "Found $($files.Count) HDL files."
+          if ($sources.Count -eq 0) {
+            throw "No Verilog/SystemVerilog source files found in src/."
+          }
+
+          $sources | Set-Content -Encoding utf8 sources.txt
+
+          Write-Host "Found $($sources.Count) HDL source files."
+
+          $sources | ForEach-Object {
+            Write-Host "Source: $_"
+          }
 
       # --------------------------------------------------
-      # Lint
+      # Lint with Verilator
       # --------------------------------------------------
 
       - name: Lint HDL
         shell: pwsh
         run: |
-          Get-Content hdl_files.txt | ForEach-Object {
-            Write-Host "Linting $_"
+          $sources = @(Get-Content sources.txt)
 
-            verilator --lint-only -Wno-fatal "$_"
+          verilator --lint-only -Wno-fatal @sources
 
-            if ($LASTEXITCODE -ne 0) {
-              throw "Verilator lint failed: $_"
-            }
+          if ($LASTEXITCODE -ne 0) {
+            throw "Verilator lint failed."
           }
 
+          Write-Host "HDL lint passed."
+
       # --------------------------------------------------
-      # Compile HDL
+      # Compile HDL sources
       # --------------------------------------------------
 
       - name: Compile HDL
@@ -93,60 +121,77 @@ jobs:
         run: |
           New-Item -ItemType Directory -Force build | Out-Null
 
-          Get-Content hdl_files.txt | ForEach-Object {
-            $file = $_
-            $output = Join-Path "build" (
-              [System.IO.Path]::GetFileNameWithoutExtension($file) + ".out"
-            )
+          $sources = @(Get-Content sources.txt)
 
-            Write-Host "Compiling $file"
+          iverilog -g2012 -tnull @sources
 
-            iverilog -g2012 -t null "$file"
-
-            if ($LASTEXITCODE -ne 0) {
-              throw "Icarus compilation failed: $file"
-            }
+          if ($LASTEXITCODE -ne 0) {
+            throw "HDL compilation failed."
           }
 
+          Write-Host "HDL compilation passed."
+
       # --------------------------------------------------
-      # Simulation
+      # Discover and run testbenches
+      #
+      # Naming convention:
+      #   testbench/tb_top.sv
+      #   testbench/tb_counter.sv
+      #
+      # Module names:
+      #   module tb_top;
+      #   module tb_counter;
       # --------------------------------------------------
 
       - name: Run simulations
         shell: pwsh
         run: |
-          $testbenches = Get-ChildItem -Path . -Recurse -File |
-            Where-Object {
-              $_.Name -match '(tb|testbench|_test)\.(v|sv)$' -and
-              $_.FullName -notmatch '[\\/]\.git[\\/]'
-            }
+          if (-not (Test-Path "testbench")) {
+            throw "Missing testbench directory."
+          }
 
-          if (-not $testbenches) {
-            Write-Host "No testbench files found; skipping simulation."
-            exit 0
+          $testbenches = @(
+            Get-ChildItem testbench -Recurse -File |
+              Where-Object {
+                $_.Name -match '^tb_.+\.(v|sv)$'
+              }
+          )
+
+          if ($testbenches.Count -eq 0) {
+            throw "No testbenches found matching tb_*.v or tb_*.sv."
           }
 
           New-Item -ItemType Directory -Force build | Out-Null
 
+          $sources = @(Get-Content sources.txt)
+
           foreach ($tb in $testbenches) {
-            $output = Join-Path "build" (
-              [System.IO.Path]::GetFileNameWithoutExtension($tb.Name) + ".vvp"
-            )
+            $module = [System.IO.Path]::GetFileNameWithoutExtension($tb.Name)
+            $output = Join-Path "build" "$module.vvp"
 
-            Write-Host "Compiling testbench: $($tb.FullName)"
+            Write-Host ""
+            Write-Host "========================================"
+            Write-Host "Testbench: $($tb.Name)"
+            Write-Host "Top module: $module"
+            Write-Host "========================================"
 
-            iverilog -g2012 -s $tb.BaseName -o $output "$($tb.FullName)"
+            # Compile design sources and testbench together.
+            iverilog -g2012 -s $module -o $output @sources "$($tb.FullName)"
 
             if ($LASTEXITCODE -ne 0) {
               throw "Testbench compilation failed: $($tb.Name)"
             }
 
-            Write-Host "Running simulation: $($tb.Name)"
-
+            # Run simulation.
             vvp $output
 
             if ($LASTEXITCODE -ne 0) {
               throw "Simulation failed: $($tb.Name)"
             }
+
+            Write-Host "PASS: $($tb.Name)"
           }
+
+          Write-Host ""
+          Write-Host "All testbench simulations passed."
 
