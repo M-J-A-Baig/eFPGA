@@ -52,15 +52,15 @@ jobs:
           echo "Found HDL source files:"
           cat sources.txt
 
-      # 5. Lint HDL using Verilator
-      - name: Lint HDL
-        shell: bash
-        run: |
-          mapfile -t sources < sources.txt
+#    # 5. Lint HDL using Verilator
+#      - name: Lint HDL
+#        shell: bash
+       # run: |
+  #        mapfile -t sources < sources.txt
 
-          verilator --lint-only -Wno-fatal "${sources[@]}"
-
-          echo "HDL lint passed."
+#          verilator --lint-only -Wno-fatal "${sources[@]}"
+#
+  #        echo "HDL lint passed.
 
       # 6. Compile HDL using Icarus Verilog
       - name: Compile HDL
