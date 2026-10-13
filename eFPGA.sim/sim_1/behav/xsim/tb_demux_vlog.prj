@@ -1,7 +1,7 @@
 # compile verilog/system verilog design source files
 sv xil_defaultlib  \
-"../../../../src/DLatch.sv" \
-"../../../../testbench/tb_Dlatch.sv" \
+"../../../../src/elements.sv" \
+"../../../../testbench/tb_elements.sv" \
 
 # compile glbl module
 verilog xil_defaultlib "glbl.v"
