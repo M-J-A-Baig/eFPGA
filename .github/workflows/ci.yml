@@ -1,0 +1,152 @@
+
+name: HDL CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  hdl-ci:
+    name: HDL CI (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # --------------------------------------------------
+      # Install tools
+      # --------------------------------------------------
+
+      - name: Install HDL tools (Ubuntu)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y verilator iverilog
+
+      - name: Install HDL tools (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          choco install verilator iverilog -y --no-progress
+
+      - name: Verify tool installation
+        shell: pwsh
+        run: |
+          verilator --version
+          iverilog -V
+          vvp -V
+
+      # --------------------------------------------------
+      # Discover HDL source files
+      # --------------------------------------------------
+
+      - name: Find HDL files
+        shell: pwsh
+        run: |
+          $files = Get-ChildItem -Path . -Recurse -File |
+            Where-Object {
+              $_.Extension -in @(".v", ".sv") -and
+              $_.FullName -notmatch '[\\/]\.git[\\/]'
+            }
+
+          if (-not $files) {
+            throw "No Verilog/SystemVerilog files found."
+          }
+
+          $files | ForEach-Object {
+            $_.FullName
+          } | Set-Content -Encoding utf8 hdl_files.txt
+
+          Write-Host "Found $($files.Count) HDL files."
+
+      # --------------------------------------------------
+      # Lint
+      # --------------------------------------------------
+
+      - name: Lint HDL
+        shell: pwsh
+        run: |
+          Get-Content hdl_files.txt | ForEach-Object {
+            Write-Host "Linting $_"
+
+            verilator --lint-only -Wno-fatal "$_"
+
+            if ($LASTEXITCODE -ne 0) {
+              throw "Verilator lint failed: $_"
+            }
+          }
+
+      # --------------------------------------------------
+      # Compile HDL
+      # --------------------------------------------------
+
+      - name: Compile HDL
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force build | Out-Null
+
+          Get-Content hdl_files.txt | ForEach-Object {
+            $file = $_
+            $output = Join-Path "build" (
+              [System.IO.Path]::GetFileNameWithoutExtension($file) + ".out"
+            )
+
+            Write-Host "Compiling $file"
+
+            iverilog -g2012 -t null "$file"
+
+            if ($LASTEXITCODE -ne 0) {
+              throw "Icarus compilation failed: $file"
+            }
+          }
+
+      # --------------------------------------------------
+      # Simulation
+      # --------------------------------------------------
+
+      - name: Run simulations
+        shell: pwsh
+        run: |
+          $testbenches = Get-ChildItem -Path . -Recurse -File |
+            Where-Object {
+              $_.Name -match '(tb|testbench|_test)\.(v|sv)$' -and
+              $_.FullName -notmatch '[\\/]\.git[\\/]'
+            }
+
+          if (-not $testbenches) {
+            Write-Host "No testbench files found; skipping simulation."
+            exit 0
+          }
+
+          New-Item -ItemType Directory -Force build | Out-Null
+
+          foreach ($tb in $testbenches) {
+            $output = Join-Path "build" (
+              [System.IO.Path]::GetFileNameWithoutExtension($tb.Name) + ".vvp"
+            )
+
+            Write-Host "Compiling testbench: $($tb.FullName)"
+
+            iverilog -g2012 -s $tb.BaseName -o $output "$($tb.FullName)"
+
+            if ($LASTEXITCODE -ne 0) {
+              throw "Testbench compilation failed: $($tb.Name)"
+            }
+
+            Write-Host "Running simulation: $($tb.Name)"
+
+            vvp $output
+
+            if ($LASTEXITCODE -ne 0) {
+              throw "Simulation failed: $($tb.Name)"
+            }
+          }
+
