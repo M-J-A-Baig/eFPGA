@@ -7,3 +7,56 @@ exec git add -A    (.gitignore takes care of what to not commit)
 exec git commit -m "comments"
 
 exec git push
+
+
+
+
+- check the last 5 ci  
+exec gh run list --repo M-J-A-Baig/eFPGA --limit 5       
+
+
+
+- last ci
+set run_id [exec gh run list --repo M-J-A-Baig/eFPGA --branch main --limit 1 --json databaseId --jq {.[0].databaseId}]
+
+puts "Watching CI run: $run_id"
+
+exec gh run watch $run_id --repo M-J-A-Baig/eFPGA --exit-status
+
+
+
+
+
+
+
+
+
+-simple pass/fail
+proc check_ci {} {
+    set repo "M-J-A-Baig/eFPGA"
+
+    puts "Checking latest GitHub Actions run..."
+
+    set run_id [exec gh run list --repo $repo --branch main --limit 1 --json databaseId --jq {.[0].databaseId}]
+
+    if {$run_id eq ""} {
+        puts "No GitHub Actions runs found."
+        return
+    }
+
+    puts "Watching CI run: $run_id"
+
+    if {[catch {
+        exec gh run watch $run_id --repo $repo --exit-status
+    } result]} {
+        puts "CI FAILED or could not be checked."
+        puts $result
+    } else {
+        puts "CI PASSED!"
+    }
+}
+
+
+
+
+check_ci

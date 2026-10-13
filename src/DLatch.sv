@@ -21,6 +21,13 @@
 
 
 module DLatch(
-
+   input logic d,
+   input logic enable,
+   output logic q
     );
+    
+    always_latch
+        begin 
+           if (enable) q <= d ;
+        end
 endmodule
