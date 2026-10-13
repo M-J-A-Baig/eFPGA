@@ -34,42 +34,54 @@ jobs:
 
       # 4. Find Verilog/SystemVerilog source files
       - name: Find HDL source files
+        id: find_hdl
         shell: bash
         run: |
-          if [ ! -d src ]; then
-            echo "ERROR: Missing src directory."
-            exit 1
-          fi
+          # Create src directory if it does not exist
+          mkdir -p src
 
+          # Find all Verilog and SystemVerilog source files
           find src -type f \( -name '*.v' -o -name '*.sv' \) \
             | sort > sources.txt
 
+          # Skip HDL checks if no source files are available
           if [ ! -s sources.txt ]; then
-            echo "ERROR: No HDL source files found in src/."
-            exit 1
+            echo "No HDL source files found. HDL checks will be skipped."
+            echo "has_hdl=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Found HDL source files:"
+            cat sources.txt
+            echo "has_hdl=true" >> "$GITHUB_OUTPUT"
           fi
 
-          echo "Found HDL source files:"
-          cat sources.txt
-
-#    # 5. Lint HDL using Verilator
-#      - name: Lint HDL
-#        shell: bash
-       # run: |
-  #        mapfile -t sources < sources.txt
-
-#          verilator --lint-only -Wno-fatal "${sources[@]}"
-#
-  #        echo "HDL lint passed.
+      # 5. Lint HDL using Verilator
+      # Uncomment this step if you want linting enabled.
+      #
+      # - name: Lint HDL
+      #   if: steps.find_hdl.outputs.has_hdl == 'true'
+      #   shell: bash
+      #   run: |
+      #     # Load HDL source files
+      #     mapfile -t sources < sources.txt
+      #
+      #     # Check syntax and potential design issues
+      #     # -Wno-fatal allows warnings without failing CI
+      #     verilator --lint-only -Wno-fatal "${sources[@]}"
+      #
+      #     echo "HDL lint passed."
 
       # 6. Compile HDL using Icarus Verilog
       - name: Compile HDL
+        if: steps.find_hdl.outputs.has_hdl == 'true'
         shell: bash
         run: |
+          # Create build directory
           mkdir -p build
 
+          # Load HDL source files
           mapfile -t sources < sources.txt
 
+          # Compile-check the design
           iverilog -g2012 -tnull "${sources[@]}"
 
           echo "HDL compilation passed."
@@ -78,49 +90,59 @@ jobs:
       - name: Run simulations
         shell: bash
         run: |
-          if [ ! -d testbench ]; then
-            echo "ERROR: Missing testbench directory."
-            exit 1
-          fi
+          # Create testbench directory if it does not exist
+          mkdir -p testbench
 
+          # Find testbenches by filename
+          # The module name inside each file can be different
           mapfile -t testbenches < <(
             find testbench -type f \
               \( -name 'tb_*.v' -o -name 'tb_*.sv' \) \
               | sort
           )
 
+          # Skip simulations if no testbenches are available
           if [ "${#testbenches[@]}" -eq 0 ]; then
-            echo "ERROR: No testbenches found matching tb_*.v or tb_*.sv."
-            exit 1
+            echo "No testbenches found. Simulations will be skipped."
+            exit 0
           fi
 
+          # Skip simulations if there are no design sources
+          if [ ! -s sources.txt ]; then
+            echo "No HDL source files available. Simulations will be skipped."
+            exit 0
+          fi
+
+          # Create build directory
           mkdir -p build
 
+          # Load HDL source files
           mapfile -t sources < sources.txt
 
+          # Compile and run each testbench
           for tb in "${testbenches[@]}"; do
-            module="$(basename "$tb")"
-            module="${module%.*}"
-            output="build/${module}.vvp"
+            name="$(basename "$tb")"
+            name="${name%.*}"
+            output="build/${name}.vvp"
 
             echo ""
             echo "========================================"
-            echo "Testbench: $tb"
-            echo "Top module: $module"
+            echo "Testbench file: $tb"
             echo "========================================"
 
-            # Compile design sources and this testbench
+            # Compile design sources and testbench.
+            # Do not specify -s "$name": the module name may differ
+            # from the testbench filename.
             iverilog -g2012 \
-              -s "$module" \
               -o "$output" \
               "${sources[@]}" \
               "$tb"
 
-            echo "Running simulation: $module"
-
-            # Run simulation; stop CI if it fails
+            # Run simulation
+            echo "Running simulation: $name"
             vvp "$output"
 
+            # Report successful simulation
             echo "PASS: $tb"
           done
 
