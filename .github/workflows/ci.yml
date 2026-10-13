@@ -11,187 +11,118 @@ permissions:
 
 jobs:
   hdl-ci:
-    name: HDL CI (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - ubuntu-latest
-          - windows-latest
+    name: HDL CI
+    runs-on: ubuntu-latest
 
     steps:
-      # --------------------------------------------------
-      # Checkout repository
-      # --------------------------------------------------
-
+      # 1. Check out repository
       - name: Checkout
         uses: actions/checkout@v4
 
-      # --------------------------------------------------
-      # Install HDL tools
-      # --------------------------------------------------
-
-      - name: Install HDL tools (Ubuntu)
-        if: runner.os == 'Linux'
+      # 2. Install open-source HDL tools
+      - name: Install HDL tools
         run: |
           sudo apt-get update
           sudo apt-get install -y verilator iverilog
 
-      - name: Install Verilator (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          choco install verilator -y --no-progress
-
-      - name: Install Icarus Verilog (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          choco install iverilog -y --no-progress
-
-      # --------------------------------------------------
-      # Verify tool installation
-      # --------------------------------------------------
-
+      # 3. Verify installations
       - name: Verify HDL tools
-        shell: pwsh
         run: |
           verilator --version
           iverilog -V
           vvp -V
 
-      # --------------------------------------------------
-      # Discover design source files
-      # --------------------------------------------------
-
+      # 4. Find Verilog/SystemVerilog source files
       - name: Find HDL source files
-        shell: pwsh
+        shell: bash
         run: |
-          if (-not (Test-Path "src")) {
-            throw "Missing src directory."
-          }
+          if [ ! -d src ]; then
+            echo "ERROR: Missing src directory."
+            exit 1
+          fi
 
-          $sources = @(
-            Get-ChildItem src -Recurse -File |
-              Where-Object {
-                $_.Extension -in @(".v", ".sv")
-              } |
-              ForEach-Object {
-                $_.FullName
-              }
-          )
+          find src -type f \( -name '*.v' -o -name '*.sv' \) \
+            | sort > sources.txt
 
-          if ($sources.Count -eq 0) {
-            throw "No Verilog/SystemVerilog source files found in src/."
-          }
+          if [ ! -s sources.txt ]; then
+            echo "ERROR: No HDL source files found in src/."
+            exit 1
+          fi
 
-          $sources | Set-Content -Encoding utf8 sources.txt
+          echo "Found HDL source files:"
+          cat sources.txt
 
-          Write-Host "Found $($sources.Count) HDL source files."
-
-          $sources | ForEach-Object {
-            Write-Host "Source: $_"
-          }
-
-      # --------------------------------------------------
-      # Lint with Verilator
-      # --------------------------------------------------
-
+      # 5. Lint HDL using Verilator
       - name: Lint HDL
-        shell: pwsh
+        shell: bash
         run: |
-          $sources = @(Get-Content sources.txt)
+          mapfile -t sources < sources.txt
 
-          verilator --lint-only -Wno-fatal @sources
+          verilator --lint-only -Wno-fatal "${sources[@]}"
 
-          if ($LASTEXITCODE -ne 0) {
-            throw "Verilator lint failed."
-          }
+          echo "HDL lint passed."
 
-          Write-Host "HDL lint passed."
-
-      # --------------------------------------------------
-      # Compile HDL sources
-      # --------------------------------------------------
-
+      # 6. Compile HDL using Icarus Verilog
       - name: Compile HDL
-        shell: pwsh
+        shell: bash
         run: |
-          New-Item -ItemType Directory -Force build | Out-Null
+          mkdir -p build
 
-          $sources = @(Get-Content sources.txt)
+          mapfile -t sources < sources.txt
 
-          iverilog -g2012 -tnull @sources
+          iverilog -g2012 -tnull "${sources[@]}"
 
-          if ($LASTEXITCODE -ne 0) {
-            throw "HDL compilation failed."
-          }
+          echo "HDL compilation passed."
 
-          Write-Host "HDL compilation passed."
-
-      # --------------------------------------------------
-      # Discover and run testbenches
-      #
-      # Naming convention:
-      #   testbench/tb_top.sv
-      #   testbench/tb_counter.sv
-      #
-      # Module names:
-      #   module tb_top;
-      #   module tb_counter;
-      # --------------------------------------------------
-
+      # 7. Compile and run every testbench
       - name: Run simulations
-        shell: pwsh
+        shell: bash
         run: |
-          if (-not (Test-Path "testbench")) {
-            throw "Missing testbench directory."
-          }
+          if [ ! -d testbench ]; then
+            echo "ERROR: Missing testbench directory."
+            exit 1
+          fi
 
-          $testbenches = @(
-            Get-ChildItem testbench -Recurse -File |
-              Where-Object {
-                $_.Name -match '^tb_.+\.(v|sv)$'
-              }
+          mapfile -t testbenches < <(
+            find testbench -type f \
+              \( -name 'tb_*.v' -o -name 'tb_*.sv' \) \
+              | sort
           )
 
-          if ($testbenches.Count -eq 0) {
-            throw "No testbenches found matching tb_*.v or tb_*.sv."
-          }
+          if [ "${#testbenches[@]}" -eq 0 ]; then
+            echo "ERROR: No testbenches found matching tb_*.v or tb_*.sv."
+            exit 1
+          fi
 
-          New-Item -ItemType Directory -Force build | Out-Null
+          mkdir -p build
 
-          $sources = @(Get-Content sources.txt)
+          mapfile -t sources < sources.txt
 
-          foreach ($tb in $testbenches) {
-            $module = [System.IO.Path]::GetFileNameWithoutExtension($tb.Name)
-            $output = Join-Path "build" "$module.vvp"
+          for tb in "${testbenches[@]}"; do
+            module="$(basename "$tb")"
+            module="${module%.*}"
+            output="build/${module}.vvp"
 
-            Write-Host ""
-            Write-Host "========================================"
-            Write-Host "Testbench: $($tb.Name)"
-            Write-Host "Top module: $module"
-            Write-Host "========================================"
+            echo ""
+            echo "========================================"
+            echo "Testbench: $tb"
+            echo "Top module: $module"
+            echo "========================================"
 
-            # Compile design sources and testbench together.
-            iverilog -g2012 -s $module -o $output @sources "$($tb.FullName)"
+            # Compile design sources and this testbench
+            iverilog -g2012 \
+              -s "$module" \
+              -o "$output" \
+              "${sources[@]}" \
+              "$tb"
 
-            if ($LASTEXITCODE -ne 0) {
-              throw "Testbench compilation failed: $($tb.Name)"
-            }
+            echo "Running simulation: $module"
 
-            # Run simulation.
-            vvp $output
+            # Run simulation; stop CI if it fails
+            vvp "$output"
 
-            if ($LASTEXITCODE -ne 0) {
-              throw "Simulation failed: $($tb.Name)"
-            }
+            echo "PASS: $tb"
+          done
 
-            Write-Host "PASS: $($tb.Name)"
-          }
-
-          Write-Host ""
-          Write-Host "All testbench simulations passed."
-
+          echo ""
+          echo "All testbench simulations passed."
