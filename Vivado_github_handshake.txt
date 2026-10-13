@@ -1,0 +1,9 @@
+pwd
+
+exec git status
+
+exec git add -A    (.gitignore takes care of what to not commit)
+
+exec git commit -m "comments"
+
+exec git push
