@@ -1,0 +1,63 @@
+```gitignore
+# Vivado generated project directories
+.Xil/
+.cache/
+.hw/
+.ip_user_files/
+.gen/
+.gen_l/
+.sim/
+.runs/
+.hw/
+
+# Vivado generated output
+*.jou
+*.log
+*.str
+*.wdb
+*.vcd
+*.pb
+*.dcp
+*.bit
+*.bin
+*.mcs
+*.prm
+*.rpt
+*.rpx
+*.xml
+*.html
+*.csv
+*.wcfg
+*.backup.*
+*.tmp
+
+# Vivado generated simulation files
+xsim.dir/
+*.vvp
+
+# Generated IP output products
+ipstatic/
+ipshared/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor files
+.vscode/
+.idea/
+
+# Keep source files, constraints, and project configuration
+!*.v
+!*.sv
+!*.vh
+!*.svh
+!*.vhd
+!*.vhdl
+!*.xdc
+!*.xci
+!*.bd
+!*.tcl
+!*.xpr
+```
