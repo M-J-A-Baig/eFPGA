@@ -307,7 +307,7 @@ decoder_3_to_8 dut(
   // 2. Stimulus Process
   initial begin
     $dumpfile("dump.vcd");
-    $dumpvars(0, decoder_3_to_8);
+    $dumpvars(0, tb_decoder);
     
     enable = 1'b0;
     #10;
