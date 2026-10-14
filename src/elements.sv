@@ -34,6 +34,7 @@ endmodule
 
 
 
+
 //DFF
 module DFF #(
 	parameter WIDTH = 1
@@ -55,8 +56,6 @@ module DFF #(
 
 
 
-
-
 //2:1 mux 
 module mux_2 (I0,I1,S,O);
   input wire I0,I1;
@@ -66,8 +65,6 @@ module mux_2 (I0,I1,S,O);
     assign O = (S == 0)? I0 : I1;
   
  endmodule
-
-
 
 
 
@@ -83,9 +80,6 @@ module mux_4 (I0,I1,I2,I3,S,O);
                  (S == 2)? I2 : 
                            I3 ;  
  endmodule
-
-
-
 
 
 
@@ -116,8 +110,6 @@ endmodule
 
 
 
-
-
 //demux 
 module demux_8to1(IN,Select,O_0,O_1,O_2,O_3,O_4,O_5,O_6,O_7 );
     input logic IN;
@@ -140,3 +132,122 @@ module demux_8to1(IN,Select,O_0,O_1,O_2,O_3,O_4,O_5,O_6,O_7 );
          endcase    
     end
 endmodule
+
+
+
+
+//decoder
+module decoder_3_to_8(a,b,c,enable,O_0,O_1,O_2,O_3,O_4,O_5,O_6,O_7);
+
+input logic a,b,c; 
+input logic enable;
+output logic O_0,O_1,O_2,O_3,O_4,O_5,O_6,O_7;
+
+
+//wires
+logic NOTa, NOTb, NOTc;
+
+logic nand_out_0 , nand_out_1, nand_out_2, nand_out_3, nand_out_4, nand_out_5, nand_out_6, nand_out7;
+
+
+
+    always_comb
+        begin
+            O_0 = 0; 
+            O_1 = 0;O_2 = 0;O_3 = 0;O_4 = 0;O_5 = 0;O_6 = 0;O_7 = 0;
+        end
+
+
+
+
+
+
+
+
+
+
+    
+//stage 1
+not (NOTa, a);
+not (NOTb, b);
+not (NOTc, c);
+not (NOTenable, enable);
+
+
+
+//stage 2
+nand (nand_out_0,NOTa,NOTb,NOTc);  //000
+nand (nand_out_1,NOTa,NOTb,c); //001
+nand (nand_out_2,NOTa,b,NOTc);//010
+nand (nand_out_3,NOTa,b,c);//011
+nand (nand_out_4,a,NOTb,NOTc);//100
+nand (nand_out_5,a,NOTb,c);//101
+nand (nand_out_6,a,b,NOTc);//110
+nand (nand_out_7,a,b,c);//111
+
+//stage 3
+nor (O_0, nand_out_0, NOTenable);
+nor (O_1, nand_out_1, NOTenable);
+nor (O_2, nand_out_2, NOTenable);
+nor (O_3, nand_out_3, NOTenable);
+nor (O_4, nand_out_4, NOTenable);
+nor (O_5, nand_out_5, NOTenable);
+nor (O_6, nand_out_6, NOTenable);
+nor (O_7, nand_out_7, NOTenable);
+
+
+endmodule
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+////lut3
+//module LUT(a,b,c,clk, Data_in,cfg_write_en, Select_in, Out);
+
+//	input logic a,b,c;
+//  	input logic clk,cfg_write_en;
+//	input logic Data_in;
+//    input logic [3-1 : 0] Select_in;// config time address
+//	output logic Out;
+  
+//    // interemediate wires
+//    logic dff_to_demux;
+//    logic demux_to_mem_0, demux_to_mem_1, demux_to_mem_2, demux_to_mem_3, demux_to_mem_4, demux_to_mem_5, demux_to_mem_6, demux_to_mem_7;
+//    logic dlatch_out_0, dlatch_out_1, dlatch_out_2, dlatch_out_3, dlatch_out_4, dlatch_out_5, dlatch_out_6, dlatch_out_7;
+    
+    
+//    //1. dff
+//  //      lut3_dff DFF(.clk(clk),.WE(cfg_write_en),.SR(1'b0), .d(Data_in),.q(dff_to_demux));
+    
+//    //2. demux
+//        lut3_demux demux_8to1(.IN(Data_in),.Select(Select_in),.O_0(demux_to_mem_0),.O_1(demux_to_mem_1),.O_2(demux_to_mem_2),.O_3(demux_to_mem_3),.O_4(demux_to_mem_4),.O_5(demux_to_mem_5),.O_6(demux_to_mem_6),.O_7(demux_to_mem_7)); 
+        
+//    //3. mem_locations
+//        for (genvar i = 0; i <= 7; i++) begin : gen_Lut3_mem_locations
+//            lut3_module DLatch( .d(demux_to_mem_i), .enable(),.q(dlatch_out_i) );
+        
+//        for 
+    
+//    //4. a
+    
+//    //5. b
+    
+//    //6. c
+  
+  
+  
+//  endmodule

@@ -275,3 +275,52 @@ module tb_demux();
             $finish;
         end
 endmodule
+
+
+
+
+
+
+
+module tb_decoder;
+  logic a,b,c,enable;
+  logic O_0,O_1,O_2,O_3,O_4,O_5,O_6,O_7
+                                            ;
+
+  
+decoder_3_to_8 dut(
+    .a(a),.b(b),.c(c),.enable(enable),
+    .O_0(O_0),.O_1(O_1),.O_2(O_2),.O_3(O_3),.O_4(O_4),.O_5(O_5),.O_6(O_6),.O_7(O_7)
+    );
+                                                             
+
+
+  // 2. Stimulus Process
+  initial begin
+    $dumpfile("dump.vcd");
+    $dumpvars(0, decoder_3_to_8);
+    
+    enable = 1'b0;
+    #10;
+
+    enable = 1'b1;
+
+        for (int i = 0; i < 8; i++) begin
+            {a, b, c} = i;
+            #10;
+        end
+
+        enable = 1'b0;
+        {a, b, c} = 3'b000;
+        #10;
+        {a, b, c} = 3'b101;
+        #10;
+
+
+
+ 
+    #120
+    $finish;
+  end
+
+endmodule
