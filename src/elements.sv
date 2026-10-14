@@ -146,26 +146,9 @@ output logic O_0,O_1,O_2,O_3,O_4,O_5,O_6,O_7;
 
 //wires
 logic NOTa, NOTb, NOTc;
-
 logic nand_out_0 , nand_out_1, nand_out_2, nand_out_3, nand_out_4, nand_out_5, nand_out_6, nand_out7;
 
-
-
-    always_comb
-        begin
-            O_0 = 0; 
-            O_1 = 0;O_2 = 0;O_3 = 0;O_4 = 0;O_5 = 0;O_6 = 0;O_7 = 0;
-        end
-
-
-
-
-
-
-
-
-
-
+        
     
 //stage 1
 not (NOTa, a);
