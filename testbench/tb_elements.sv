@@ -284,13 +284,22 @@ endmodule
 
 module tb_decoder;
   logic a,b,c,enable;
-  logic O_0,O_1,O_2,O_3,O_4,O_5,O_6,O_7
-                                            ;
+  logic O_0,O_1,O_2,O_3,O_4,O_5,O_6,O_7;
 
   
 decoder_3_to_8 dut(
-    .a(a),.b(b),.c(c),.enable(enable),
-    .O_0(O_0),.O_1(O_1),.O_2(O_2),.O_3(O_3),.O_4(O_4),.O_5(O_5),.O_6(O_6),.O_7(O_7)
+    .a(a),
+    .b(b),
+    .c(c),
+    .enable(enable),
+    .O_0(O_0),
+    .O_1(O_1),
+    .O_2(O_2),
+    .O_3(O_3),
+    .O_4(O_4),
+    .O_5(O_5),
+    .O_6(O_6),
+    .O_7(O_7)
     );
                                                              
 
