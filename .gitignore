@@ -1,14 +1,14 @@
 ```gitignore
 # Vivado generated project directories
-.Xil/
-.cache/
-.hw/
-.ip_user_files/
-.gen/
-.gen_l/
-.sim/
-.runs/
-.hw/
+*.Xil/
+*.cache/
+*.hw/
+*.ip_user_files/
+*.gen/
+*.gen_l/
+*.sim/
+*.runs/
+*.hw/
 
 # Vivado generated output
 *.jou
