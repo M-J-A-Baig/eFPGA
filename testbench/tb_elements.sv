@@ -3,13 +3,13 @@
 
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer: 
+// Engineer: MJA Baig
 // 
 // Create Date: 10/13/2026 01:20:34 PM
-// Design Name: 
+// Design Name: eFPGA building blocks 
 // Module Name: tb_elements
-// Project Name: 
-// Target Devices: 
+// Project Name: eFPGA
+// Target Devices: ASIC
 // Tool Versions: 
 // Description: 
 // 
@@ -279,14 +279,10 @@ endmodule
 
 
 
-
-
-
 module tb_decoder;
   logic a,b,c,enable;
   logic O_0,O_1,O_2,O_3,O_4,O_5,O_6,O_7;
-
-  
+ 
 decoder_3_to_8 dut(
     .a(a),
     .b(b),
@@ -303,17 +299,15 @@ decoder_3_to_8 dut(
     );
                                                              
 
-
   // 2. Stimulus Process
   initial begin
     $dumpfile("dump.vcd");
     $dumpvars(0, tb_decoder);
     
-    enable = 1'b0;
-    #10;
-
-    enable = 1'b1;
-
+        enable = 1'b0;
+        #10;
+        
+        enable = 1'b1;
         for (int i = 0; i < 8; i++) begin
             {a, b, c} = i;
             #10;
@@ -322,14 +316,74 @@ decoder_3_to_8 dut(
         enable = 1'b0;
         {a, b, c} = 3'b000;
         #10;
+        
         {a, b, c} = 3'b101;
         #10;
-
-
-
  
-    #120
+    #20
     $finish;
   end
 
 endmodule
+
+
+
+
+module tb_lut3;
+    logic a,b,c;
+  	logic clk,cfg_write_en;
+	logic Data_in;
+	logic Out;
+
+
+LUT3 dut (.a(a), .b(b), .c(c), .clk(clk), .Data_in(Data_in), .cfg_write_en(cfg_write_en), .Out(Out));
+
+always #5 clk = ~clk;
+
+  initial 
+      begin
+        $dumpfile("dump.vcd");
+        $dumpvars(0, tb_lut3);
+        
+       
+        clk = 1;
+        cfg_write_en = 0;  // initial condition
+        #10
+       
+       
+       //config time
+        cfg_write_en = 1;
+        
+        a=0; b=0; c=0;     Data_in=1;
+        #10
+        a=0; b=0; c=1;     Data_in=0;
+        #10
+        a=0; b=1; c=0;     Data_in=0;
+        #10
+        a=0; b=1; c=1;     Data_in=0;
+        #10
+        a=1; b=0; c=0;     Data_in=1;
+        #10
+        a=1; b=0; c=1;     Data_in=1;
+        #10
+        a=1; b=1; c=0;     Data_in=0;
+        #10
+        a=1; b=1; c=1;     Data_in=1;
+        #10
+        
+        
+        //run time 
+        cfg_write_en = 0;    // normal ops
+        #50
+        a=0; b=0; c=1;     
+        #10
+        a=1; b=0; c=0;     
+        #10
+        a=0; b=0; c=0;    
+        #10
+       
+        $finish;
+      end  
+      
+      
+ endmodule

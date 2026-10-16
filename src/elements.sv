@@ -149,7 +149,7 @@ logic NOTa, NOTb, NOTc;
 logic nand_out_0 , nand_out_1, nand_out_2, nand_out_3, nand_out_4, nand_out_5, nand_out_6, nand_out7;
 
         
-    
+  
 //stage 1
 not (NOTa, a);
 not (NOTb, b);
@@ -184,53 +184,57 @@ endmodule
 
 
 
+//lut3
+module LUT3(a,b,c,clk, Data_in,cfg_write_en, Out);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-////lut3
-//module LUT(a,b,c,clk, Data_in,cfg_write_en, Select_in, Out);
-
-//	input logic a,b,c;
-//  	input logic clk,cfg_write_en;
-//	input logic Data_in;
-//    input logic [3-1 : 0] Select_in;// config time address
-//	output logic Out;
+	input logic a,b,c;
+  	input logic clk,cfg_write_en;
+	input logic Data_in;
+    //input logic [3-1 : 0] Select_in;// config time address handelde by abc
+	output logic Out;
   
-//    // interemediate wires
-//    logic dff_to_demux;
-//    logic demux_to_mem_0, demux_to_mem_1, demux_to_mem_2, demux_to_mem_3, demux_to_mem_4, demux_to_mem_5, demux_to_mem_6, demux_to_mem_7;
-//    logic dlatch_out_0, dlatch_out_1, dlatch_out_2, dlatch_out_3, dlatch_out_4, dlatch_out_5, dlatch_out_6, dlatch_out_7;
+    // interemediate wires
+    // A MSB and C LSB
+    logic clock_gated_enable;
+    logic [7:0] decoder_to_mem, dlatch_out;
     
+    logic output_mux_c_01, output_mux_c_23,output_mux_c_45, output_mux_c_67;
+    logic output_mux_b_03, output_mux_b_47;
+    logic output_mux_a_07;
     
-//    //1. dff
-//  //      lut3_dff DFF(.clk(clk),.WE(cfg_write_en),.SR(1'b0), .d(Data_in),.q(dff_to_demux));
+    //1. clock gateing the enable for decoder
+    // so it acts as a clocked input for dram
+    // we do not need a dff, just a and gate would do
+        and clocking_gate(clock_gated_enable, cfg_write_en, clk );
     
-//    //2. demux
-//        lut3_demux demux_8to1(.IN(Data_in),.Select(Select_in),.O_0(demux_to_mem_0),.O_1(demux_to_mem_1),.O_2(demux_to_mem_2),.O_3(demux_to_mem_3),.O_4(demux_to_mem_4),.O_5(demux_to_mem_5),.O_6(demux_to_mem_6),.O_7(demux_to_mem_7)); 
+    //2. decoder
+        decoder_3_to_8 lut3_decoder(.a(a),.b(b),.c(c),.enable(clock_gated_enable),.O_0(decoder_to_mem[0]), .O_1(decoder_to_mem[1]), .O_2(decoder_to_mem[2]), .O_3(decoder_to_mem[3]), .O_4(decoder_to_mem[4]), .O_5(decoder_to_mem[5]), .O_6(decoder_to_mem[6]), .O_7(decoder_to_mem[7]));
+
+    //3. mem_locations
+        for (genvar i = 0; i <= 7; i++) begin : gen_Lut3_mem_locations
+               DLatch lut3_module( .d(Data_in), .enable(decoder_to_mem[i]),.q(dlatch_out[i]) );
+            end
+                 
+    //4. a
+        mux_2 mux_select_c_0(.I0(dlatch_out[0]), .I1(dlatch_out[1]), .S(c), .O(output_mux_c_01));
+        mux_2 mux_select_c_1(.I0(dlatch_out[2]), .I1(dlatch_out[3]), .S(c), .O(output_mux_c_23));
+        mux_2 mux_select_c_2(.I0(dlatch_out[4]), .I1(dlatch_out[5]), .S(c), .O(output_mux_c_45));
+        mux_2 mux_select_c_3(.I0(dlatch_out[6]), .I1(dlatch_out[7]), .S(c), .O(output_mux_c_67));
+    
+    //5. b
+        mux_2 mux_select_b_0(.I0(output_mux_c_01), .I1(output_mux_c_23), .S(b), .O(output_mux_b_03));
+        mux_2 mux_select_b_1(.I0(output_mux_c_45), .I1(output_mux_c_67), .S(b), .O(output_mux_b_47));
         
-//    //3. mem_locations
-//        for (genvar i = 0; i <= 7; i++) begin : gen_Lut3_mem_locations
-//            lut3_module DLatch( .d(demux_to_mem_i), .enable(),.q(dlatch_out_i) );
-        
-//        for 
-    
-//    //4. a
-    
-//    //5. b
-    
-//    //6. c
+    //6. c
+         mux_2 mux_select_a_0(.I0(output_mux_b_03), .I1(output_mux_b_47), .S(a), .O(output_mux_a_07));
+         
+    //7. output
+        assign Out = output_mux_a_07;
+  
+  
+  endmodule
   
   
   
-//  endmodule
+  
+  
