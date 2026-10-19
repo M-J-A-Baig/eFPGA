@@ -387,3 +387,213 @@ always #5 clk = ~clk;
       
       
  endmodule
+ 
+ 
+ 
+ 
+ module tb_lut6;
+    logic clk;
+    logic d,e,f;
+    logic a_lower_nibble, b_lower_nibble, c_lower_nibble,Data_in__lower_nibble;
+    logic a_upper_nibble, b_upper_nibble, c_upper_nibble, Data_in__upper_nibble;
+    logic cfg_write_en_0, cfg_write_en_1, cfg_write_en_2, cfg_write_en_3, cfg_write_en_4, cfg_write_en_5, cfg_write_en_6, cfg_write_en_7;
+    logic Cin_lower_nibble, Cin_upper_nibble;
+    logic [1:0]Carry_select_Int_0,Carry_select_Int_1;
+    logic LowerNibble_negVal_sel, UpperNibble_negVal_sel;
+    logic O_6, O_5;
+    logic Sum_0, Sum_1, Cout_lower_nibble, Sum_2, Sum_3, Cout_upper_nibble; 
+ 
+    LUT6 dut (.clk(clk), .d(d), .e(e), .f(f), .a_lower_nibble(a_lower_nibble), .b_lower_nibble(b_lower_nibble), .c_lower_nibble(c_lower_nibble), .Data_in__lower_nibble(Data_in__lower_nibble), .Data_in__upper_nibble(Data_in__upper_nibble), 
+              .a_upper_nibble(a_upper_nibble), .b_upper_nibble(b_upper_nibble), .c_upper_nibble(c_upper_nibble), .cfg_write_en_0(cfg_write_en_0), .cfg_write_en_1(cfg_write_en_1), .cfg_write_en_2(cfg_write_en_2), .cfg_write_en_3(cfg_write_en_3), 
+              .cfg_write_en_4(cfg_write_en_4), .cfg_write_en_5(cfg_write_en_5), .cfg_write_en_6(cfg_write_en_6), .cfg_write_en_7(cfg_write_en_7), .Cin_lower_nibble(Cin_lower_nibble), .Cin_upper_nibble(Cin_upper_nibble), .Carry_select_Int_0(Carry_select_Int_0), 
+              .Carry_select_Int_1(Carry_select_Int_1), .LowerNibble_negVal_sel(LowerNibble_negVal_sel), .UpperNibble_negVal_sel(UpperNibble_negVal_sel), .O_6(O_6), .O_5(O_5), .Sum_0(Sum_0), .Sum_1(Sum_1), .Cout_lower_nibble(Cout_lower_nibble), .Sum_2(Sum_2), .Sum_3(Sum_3), .Cout_upper_nibble(Cout_upper_nibble));
+              
+              
+    always #5 clk = ~clk;
+    
+    
+    initial 
+      begin
+        $dumpfile("dump.vcd");
+        $dumpvars(0, tb_lut6);
+        
+        // initial condition
+        clk = 1;
+        cfg_write_en_0 = 0;  
+        cfg_write_en_1 = 0;
+        cfg_write_en_2 = 0;
+        cfg_write_en_3 = 0;
+        cfg_write_en_4 = 0;
+        cfg_write_en_5 = 0;
+        cfg_write_en_6 = 0;
+        cfg_write_en_7 = 0;
+        #10
+        
+        
+        //config time
+        cfg_write_en_0 = 1;  
+        cfg_write_en_1 = 1;
+        cfg_write_en_2 = 1;
+        cfg_write_en_3 = 1;
+        cfg_write_en_4 = 1;
+        cfg_write_en_5 = 1;
+        cfg_write_en_6 = 1;
+        cfg_write_en_7 = 1;
+        
+        a_lower_nibble=0; b_lower_nibble=0; c_lower_nibble=0;     Data_in__lower_nibble=1;
+        a_upper_nibble=0; b_upper_nibble=0; c_upper_nibble=0;     Data_in__upper_nibble=0;
+        #10
+        a_lower_nibble=0; b_lower_nibble=0; c_lower_nibble=1;     Data_in__lower_nibble=0;
+        a_upper_nibble=0; b_upper_nibble=0; c_upper_nibble=1;     Data_in__upper_nibble=1;
+        #10
+        a_lower_nibble=0; b_lower_nibble=1; c_lower_nibble=0;     Data_in__lower_nibble=0;
+        a_upper_nibble=0; b_upper_nibble=1; c_upper_nibble=0;     Data_in__upper_nibble=1;
+        #10
+        a_lower_nibble=0; b_lower_nibble=1; c_lower_nibble=1;     Data_in__lower_nibble=0;
+        a_upper_nibble=0; b_upper_nibble=1; c_upper_nibble=1;     Data_in__upper_nibble=1;
+        #10
+        a_lower_nibble=1; b_lower_nibble=0; c_lower_nibble=0;     Data_in__lower_nibble=0;
+        a_upper_nibble=1; b_upper_nibble=0; c_upper_nibble=0;     Data_in__upper_nibble=1;
+        #10
+        a_lower_nibble=1; b_lower_nibble=0; c_lower_nibble=1;     Data_in__lower_nibble=1;
+        a_upper_nibble=1; b_upper_nibble=0; c_upper_nibble=1;     Data_in__upper_nibble=0;
+        #10
+        a_lower_nibble=1; b_lower_nibble=1; c_lower_nibble=0;     Data_in__lower_nibble=0;
+        a_upper_nibble=1; b_upper_nibble=1; c_upper_nibble=0;     Data_in__upper_nibble=1;
+        #10
+        a_lower_nibble=1; b_lower_nibble=1; c_lower_nibble=1;     Data_in__lower_nibble=1;
+        a_upper_nibble=1; b_upper_nibble=1; c_upper_nibble=1;     Data_in__upper_nibble=0;
+        #10
+        
+
+        
+        //differentitaing time
+        #50
+        
+                
+        //normal ops  lut 6 and lut 5
+        cfg_write_en_0 = 0;  
+        cfg_write_en_1 = 0;
+        cfg_write_en_2 = 0;
+        cfg_write_en_3 = 0;
+        cfg_write_en_4 = 0;
+        cfg_write_en_5 = 0;
+        cfg_write_en_6 = 0;
+        cfg_write_en_7 = 0;
+        #10
+        
+        //lower values
+        a_lower_nibble=0; b_lower_nibble=0; c_lower_nibble=1;
+        a_upper_nibble=0; b_upper_nibble=0; c_upper_nibble=1;
+        d = 0; e = 0; f = 0;
+        #10
+        a_lower_nibble=1; b_lower_nibble=0; c_lower_nibble=0;
+        a_upper_nibble=1; b_upper_nibble=0; c_upper_nibble=0;
+        d = 1; e = 0; f = 0;
+        #10
+        a_lower_nibble=0; b_lower_nibble=0; c_lower_nibble=0;
+        a_upper_nibble=0; b_upper_nibble=0; c_upper_nibble=0;
+        d = 0; e = 1; f = 0;
+        #40
+        
+        
+        
+        //upper values
+        a_lower_nibble=0; b_lower_nibble=0; c_lower_nibble=1;
+        a_upper_nibble=0; b_upper_nibble=0; c_upper_nibble=1;
+        d = 0; e = 0; f = 1;
+        #10
+        a_lower_nibble=1; b_lower_nibble=0; c_lower_nibble=0;
+        a_upper_nibble=1; b_upper_nibble=0; c_upper_nibble=0;
+        d = 0; e = 1; f = 1;
+        #10
+        a_lower_nibble=0; b_lower_nibble=0; c_lower_nibble=0;
+        a_upper_nibble=0; b_upper_nibble=0; c_upper_nibble=0;
+        d = 1; e = 0; f = 1;
+        #50
+        
+        
+        
+         //config time
+        a_lower_nibble=0; b_lower_nibble=0; c_lower_nibble=0;  
+        cfg_write_en_0 = 1;  
+        Data_in__lower_nibble=1;
+        #10
+        
+        cfg_write_en_0 = 0;  
+        cfg_write_en_1 = 1;  
+        Data_in__lower_nibble=1;       
+        #10
+        
+        cfg_write_en_1 = 0;  
+        cfg_write_en_2 = 1;  
+        Data_in__lower_nibble=0;
+        #10
+        
+        cfg_write_en_2 = 0;  
+        cfg_write_en_3 = 1;  
+        Data_in__lower_nibble=1;
+        #10
+        cfg_write_en_3 = 0;  
+        
+        
+        
+        //differentitaing time
+        #50
+        
+                
+        //normal ops add and cin 0
+        Carry_select_Int_0 = 0;
+        a_lower_nibble=0; b_lower_nibble=0; c_lower_nibble=0;  
+        
+        
+        //differentitaing time
+        #50
+        
+        //normal ops add cin 1
+        // sub and a distant adders
+        Carry_select_Int_0 = 3;
+        a_lower_nibble=0; b_lower_nibble=0; c_lower_nibble=0;  
+        
+        
+        //differentitaing time
+        #50
+        
+         // 2 adders with cin 0
+        Carry_select_Int_0 = 1;
+        Cin_lower_nibble = 0;
+        a_lower_nibble=0; b_lower_nibble=0; c_lower_nibble=0;  
+        
+        
+        //differentitaing time
+        #50
+        
+        
+         // 2 adders with cin 1
+        Carry_select_Int_0 = 2;
+        Cin_lower_nibble = 1;
+        a_lower_nibble=0; b_lower_nibble=0; c_lower_nibble=0;  
+        
+        
+        
+        //differentitaing time
+        #50
+        
+        // sub
+        Carry_select_Int_0 =2;
+        LowerNibble_negVal_sel = 1;
+        Cin_lower_nibble = 1;
+        a_lower_nibble=0; b_lower_nibble=0; c_lower_nibble=0;  
+        
+        
+        
+        //differentitaing time
+        #50
+        
+        
+        
+        
+       $finish; 
+      end   
+     
+ endmodule
