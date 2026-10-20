@@ -1,4 +1,4 @@
-//`timescale 1ns / 1ps
+`timescale 1ns / 1ps
 ////////////////////////////////////////////////////////////////////////////////////
 //// Company: 
 //// Engineer: MJA Baig
@@ -18,7 +18,7 @@
 //// Additional Comments:
 //// 
 ////////////////////////////////////////////////////////////////////////////////////
-`include "elements.sv"
+//`include "elements.sv"
 
 module clb_1_bit (clk,a,b,c,d,e,f, Data_in, cfg_write_en_0, cfg_write_en_1, cfg_write_en_2, cfg_write_en_3, cfg_write_en_4, cfg_write_en_5, cfg_write_en_6, cfg_write_en_7, Cin_lower_nibble, Cin_upper_nibble, Carry_select_Int_0,Carry_select_Int_1, LowerNibble_negVal_sel, UpperNibble_negVal_sel, O_6, O_5, Sum_0, Sum_1, Cout_lower_nibble, Sum_2, Sum_3, Cout_upper_nibble, sel_clb_out, cfg_sel_clb_out, sel_Dff_out, cfg_sel_Dff_out, dff_Write_enable, dff_reset, out, Mem_out);
 
