@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
-`define Width 4
+`define Width 1
 
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
@@ -7,7 +7,7 @@
 // 
 // Create Date: 10/13/2026 01:20:34 PM
 // Design Name: eFPGA building blocks 
-// Module Name: tb_elements
+// Module Name: elements
 // Project Name: eFPGA
 // Target Devices: ASIC
 // Tool Versions: 
@@ -61,14 +61,14 @@ endmodule
 module tb_dff;
   reg clk;
   reg WE;
-  reg SR;
+  reg reset;
   reg [`Width-1:0] d;
   wire [`Width -1:0] q;
 
   DFF #(`Width) dut(
     .clk(clk),
     .WE(WE),
-    .SR(SR),
+    .reset(reset),
     .d(d),
     .q(q)
   );
@@ -83,18 +83,19 @@ module tb_dff;
     $dumpvars(0, tb_dff);
 
     // Monitor signal updates in stdout
-    $monitor("Time=%0t | clk=%b SR=%b WE=%b d=%b -> q=%b", 
-             $time, clk, SR, WE, d, q);
+    $monitor("Time=%0t | clk=%b reset=%b WE=%b d=%b -> q=%b", 
+             $time, clk, reset, WE, d, q);
 
     clk = 0;
     WE  = 0;
-    SR  = 0;
+    reset  = 1; //active low
     d   = 0;
-
+    #5
+    
     #10;
-    SR = 1; d = 4'b0001;      // Force reset active with d=1 to verify SR priority
+    reset = 0; d = 4'b0001;  WE = 1;       // Force reset active with d=1 to verify SR priority
     #10;
-    SR = 0;             // Release reset
+    reset = 1;             // Release reset
 
     #10;
     WE = 1; 
@@ -112,7 +113,7 @@ module tb_dff;
 
     WE = 1; d =  4'b0001;      // Enable write
     #10;                // q becomes 1
-    SR = 1;             // Assert reset while WE is still active
+    reset = 0;             // Assert reset while WE is still active
     #10;                // SR should override WE, q becomes 0
 
     // End 

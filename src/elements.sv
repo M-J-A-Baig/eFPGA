@@ -1,13 +1,13 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer: 
+// Engineer: MJA Baig
 // 
 // Create Date: 10/13/2026 10:41:44 AM
 // Design Name: 
-// Module Name: DLatch
-// Project Name: 
-// Target Devices: 
+// Module Name: Basic Blocks
+// Project Name: eFPGA
+// Target Devices: ASIC
 // Tool Versions: 
 // Description: 
 // 
@@ -39,17 +39,25 @@ endmodule
 module DFF #(
 	parameter WIDTH = 1
 )
-  (clk,WE,SR, d,q);
-  input wire clk,WE,SR;
+  (clk,WE,reset, d,q);
+  input wire clk,WE,reset;
   input wire [WIDTH-1:0] d;
   output reg [WIDTH-1:0] q;
   
-  always@(posedge clk) 
-    begin
-      q <= (SR == 1'b1)? {WIDTH{1'b0}}  :   // if reset 
-     	   (WE == 1'b1)? d     :  q ;   //if WE take d otherwise keep q
+//  always@(posedge clk) 
+//    begin
+//      q <= (SR == 1'b1)? {WIDTH{1'b0}}  :   // if reset 
+//     	   (WE == 1'b1)? d     :  q ;   //if WE take d otherwise keep q
       
-    end 
+//    end 
+    
+    always_ff@(posedge clk or negedge reset)
+        begin
+            q <= (reset == 0)  ? {WIDTH{1'b0}} :  
+                 (clk & WE)  ? d             :
+                                 q             ;   
+        
+        end
   
   endmodule
 
