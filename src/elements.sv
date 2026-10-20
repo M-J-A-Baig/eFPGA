@@ -19,6 +19,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
+
 //D latch
 module DLatch(
    input logic d,
@@ -71,13 +72,13 @@ module mux_2 (I0,I1,S,O);
   output reg O;
   
   
-//    assign O = (S == 0)? I0 : I1;
-    always_comb begin
-        case (S)
-            1'b1:   O = I1;
-            default: O = I0;
-        endcase
-end
+    assign O = (S == 0)? I0 : I1;
+//    always_comb begin
+//        case (S)
+//            1'b1:   O = I1;
+//            default: O = I0;
+//        endcase
+//end
   
  endmodule
 
@@ -174,14 +175,14 @@ not (NOTenable, enable);
 
 
 //stage 2
-nand (nand_out_0,NOTa,NOTb,NOTc);  //000
-nand (nand_out_1,NOTa,NOTb,c); //001
-nand (nand_out_2,NOTa,b,NOTc);//010
-nand (nand_out_3,NOTa,b,c);//011
-nand (nand_out_4,a,NOTb,NOTc);//100
-nand (nand_out_5,a,NOTb,c);//101
-nand (nand_out_6,a,b,NOTc);//110
-nand (nand_out_7,a,b,c);//111
+nand (nand_out_0,NOTc,NOTb,NOTa);  //000
+nand (nand_out_1,NOTc,NOTb,a); //001
+nand (nand_out_2,NOTc,b,NOTa);//010
+nand (nand_out_3,NOTc,b,a);//011
+nand (nand_out_4,c,NOTb,NOTa);//100
+nand (nand_out_5,c,NOTb,a);//101
+nand (nand_out_6,c,b,NOTa);//110
+nand (nand_out_7,c,b,a);//111
 
 //stage 3
 nor (O_0, nand_out_0, NOTenable);
@@ -212,10 +213,9 @@ module LUT3(a,b,c,clk, Data_in,cfg_write_en, Out);
     // A MSB and C LSB
     logic clock_gated_enable;
     logic [7:0] decoder_to_mem, dlatch_out;
-    
-    logic output_mux_c_01, output_mux_c_23,output_mux_c_45, output_mux_c_67;
+    logic output_mux_a_01, output_mux_a_23,output_mux_a_45, output_mux_a_67;
     logic output_mux_b_03, output_mux_b_47;
-    logic output_mux_a_07;
+    logic output_mux_c_07;
     
     //1. clock gateing the enable for decoder
     // so it acts as a clocked input for dram
@@ -229,22 +229,22 @@ module LUT3(a,b,c,clk, Data_in,cfg_write_en, Out);
         for (genvar i = 0; i <= 7; i++) begin : gen_Lut3_mem_locations
                DLatch lut3_module( .d(Data_in), .enable(decoder_to_mem[i]),.q(dlatch_out[i]) );
             end
-                 
-    //4. a
-        mux_2 mux_select_c_0(.I0(dlatch_out[0]), .I1(dlatch_out[1]), .S(c), .O(output_mux_c_01));
-        mux_2 mux_select_c_1(.I0(dlatch_out[2]), .I1(dlatch_out[3]), .S(c), .O(output_mux_c_23));
-        mux_2 mux_select_c_2(.I0(dlatch_out[4]), .I1(dlatch_out[5]), .S(c), .O(output_mux_c_45));
-        mux_2 mux_select_c_3(.I0(dlatch_out[6]), .I1(dlatch_out[7]), .S(c), .O(output_mux_c_67));
+                
+    //4. c
+        mux_2 mux_select_a_0(.I0(dlatch_out[0]), .I1(dlatch_out[1]), .S(a), .O(output_mux_a_01));
+        mux_2 mux_select_a_1(.I0(dlatch_out[2]), .I1(dlatch_out[3]), .S(a), .O(output_mux_a_23));
+        mux_2 mux_select_a_2(.I0(dlatch_out[4]), .I1(dlatch_out[5]), .S(a), .O(output_mux_a_45));
+        mux_2 mux_select_a_3(.I0(dlatch_out[6]), .I1(dlatch_out[7]), .S(a), .O(output_mux_a_67));
     
     //5. b
-        mux_2 mux_select_b_0(.I0(output_mux_c_01), .I1(output_mux_c_23), .S(b), .O(output_mux_b_03));
-        mux_2 mux_select_b_1(.I0(output_mux_c_45), .I1(output_mux_c_67), .S(b), .O(output_mux_b_47));
+        mux_2 mux_select_b_0(.I0(output_mux_a_01), .I1(output_mux_a_23), .S(b), .O(output_mux_b_03));
+        mux_2 mux_select_b_1(.I0(output_mux_a_45), .I1(output_mux_a_67), .S(b), .O(output_mux_b_47));
         
-    //6. c
-         mux_2 mux_select_a_0(.I0(output_mux_b_03), .I1(output_mux_b_47), .S(a), .O(output_mux_a_07));
+    //6. a
+         mux_2 mux_select_c_0(.I0(output_mux_b_03), .I1(output_mux_b_47), .S(c), .O(output_mux_c_07));
          
     //7. output
-        assign Out = output_mux_a_07;
+        assign Out = output_mux_c_07;
   
   
   endmodule
@@ -254,12 +254,101 @@ module LUT3(a,b,c,clk, Data_in,cfg_write_en, Out);
  
 //lut6
 // same selectors for a nibble
-module LUT6(clk,d,e,f, a_lower_nibble, b_lower_nibble, c_lower_nibble, Data_in__lower_nibble, Data_in__upper_nibble, a_upper_nibble, b_upper_nibble, c_upper_nibble, cfg_write_en_0, cfg_write_en_1, cfg_write_en_2, cfg_write_en_3, cfg_write_en_4, cfg_write_en_5, cfg_write_en_6, cfg_write_en_7, Cin_lower_nibble, Cin_upper_nibble, Carry_select_Int_0,Carry_select_Int_1, LowerNibble_negVal_sel, UpperNibble_negVal_sel, O_6, O_5, Sum_0, Sum_1, Cout_lower_nibble, Sum_2, Sum_3, Cout_upper_nibble);
+//module LUT6(clk,d,e,f, a_lower_nibble, b_lower_nibble, c_lower_nibble, Data_in__lower_nibble, Data_in__upper_nibble, a_upper_nibble, b_upper_nibble, c_upper_nibble, cfg_write_en_0, cfg_write_en_1, cfg_write_en_2, cfg_write_en_3, cfg_write_en_4, cfg_write_en_5, cfg_write_en_6, cfg_write_en_7, Cin_lower_nibble, Cin_upper_nibble, Carry_select_Int_0,Carry_select_Int_1, LowerNibble_negVal_sel, UpperNibble_negVal_sel, O_6, O_5, Sum_0, Sum_1, Cout_lower_nibble, Sum_2, Sum_3, Cout_upper_nibble);
+
+//    input logic clk;
+//    input logic d,e,f;
+//    input logic a_lower_nibble, b_lower_nibble, c_lower_nibble,Data_in__lower_nibble;
+//    input logic a_upper_nibble, b_upper_nibble, c_upper_nibble, Data_in__upper_nibble;
+//    input logic cfg_write_en_0, cfg_write_en_1, cfg_write_en_2, cfg_write_en_3, cfg_write_en_4, cfg_write_en_5, cfg_write_en_6, cfg_write_en_7;
+//    input logic Cin_lower_nibble, Cin_upper_nibble;
+//    input logic LowerNibble_negVal_sel, UpperNibble_negVal_sel;
+//    input logic [1:0]Carry_select_Int_0,Carry_select_Int_1;
+//    output logic O_6, O_5;
+//    output logic Sum_0, Sum_1, Cout_lower_nibble, Sum_2, Sum_3, Cout_upper_nibble; 
+    
+//    //abc with a msb and c lsb
+    
+    
+//    //connecting wires
+//    logic Carry_LowerNibble_out, Carry_UpperNibble_out;
+//    logic Wire_LowerNibble_AddSub_Sel_val, Wire_UpperNibble_AddSub_Sel_val;
+//    logic Out_lut3_0 , Out_lut3_1, Out_lut3_2, Out_lut3_3, Out_lut3_4, Out_lut3_5, Out_lut3_6, Out_lut3_7;
+//    logic Not_Out_lut3_0, Not_Out_lut3_4;
+//    logic CarryBetweenAdder_Lut3_01_and_Lut3_23,CarryBetweenAdder_Lut3_45_and_Lut3_67;
+//    logic Wire_Cout_LowerNibble,Wire_Cout_UpperNibble;
+//    logic Out_mux4_01, Out_mux4_23, Out_mux4_45, Out_mux4_67;
+//    logic Out_mux5_03, Out_mux5_47;
+    
+    
+//    //0. clock buffers
+    
+    
+//    //stage 0
+//    //1. input carry lower nibble
+//        mux_4 lower_carry_selector(.I0(1'b0),.I1(Cin_lower_nibble),.I2(Cin_lower_nibble),.I3(1'b1),.S(Carry_select_Int_0),.O(Carry_LowerNibble_out));
+        
+//    //2. lower nibble lut3s
+//        LUT3  lut3_0(.a(a_lower_nibble),.b(b_lower_nibble),.c(c_lower_nibble),.clk(clk), .Data_in(Data_in__lower_nibble),.cfg_write_en(cfg_write_en_0), .Out(Out_lut3_0));
+//        LUT3  lut3_1(.a(a_lower_nibble),.b(b_lower_nibble),.c(c_lower_nibble),.clk(clk), .Data_in(Data_in__lower_nibble),.cfg_write_en(cfg_write_en_1), .Out(Out_lut3_1)); 
+//        LUT3  lut3_2(.a(a_lower_nibble),.b(b_lower_nibble),.c(c_lower_nibble),.clk(clk), .Data_in(Data_in__lower_nibble),.cfg_write_en(cfg_write_en_2), .Out(Out_lut3_2)); 
+//        LUT3  lut3_3(.a(a_lower_nibble),.b(b_lower_nibble),.c(c_lower_nibble),.clk(clk), .Data_in(Data_in__lower_nibble),.cfg_write_en(cfg_write_en_3), .Out(Out_lut3_3)); 
+              
+        
+//    //3. Lower nibble adders
+//    // negative term in lower lut3, because addition with 2s compliment because limiting not gate 
+      
+//         not two_comp_lowerNible(Not_Out_lut3_0,Out_lut3_0);
+//         mux_2 diff_bw_add_sub_LowerNibble(.I0(Out_lut3_0),.I1(Not_Out_lut3_0), .S(LowerNibble_negVal_sel),.O(Wire_LowerNibble_AddSub_Sel_val));
+//         adder_1_bit lut3_01(.a(Wire_LowerNibble_AddSub_Sel_val),.b(Out_lut3_1),.cin(Carry_LowerNibble_out),.out(Sum_0),.cout(CarryBetweenAdder_Lut3_01_and_Lut3_23));
+//         adder_1_bit lut3_23(.a(Out_lut3_2),.b(Out_lut3_3),.cin(CarryBetweenAdder_Lut3_01_and_Lut3_23),.out(Sum_1),.cout(Wire_Cout_LowerNibble));
+        
+//    //4. input carry upper nibble
+//        mux_4 Upper_carry_selector(.I0(1'b0),.I1(Cin_upper_nibble),.I2(Wire_Cout_LowerNibble),.I3(1'b1),.S(Carry_select_Int_1),.O(Carry_UpperNibble_out));
+        
+//    //5. upper nibble lut3s
+//        LUT3  lut3_4(.a(a_upper_nibble),.b(b_upper_nibble),.c(c_upper_nibble),.clk(clk), .Data_in(Data_in__upper_nibble),.cfg_write_en(cfg_write_en_4), .Out(Out_lut3_4));
+//        LUT3  lut3_5(.a(a_upper_nibble),.b(b_upper_nibble),.c(c_upper_nibble),.clk(clk), .Data_in(Data_in__upper_nibble),.cfg_write_en(cfg_write_en_5), .Out(Out_lut3_5)); 
+//        LUT3  lut3_6(.a(a_upper_nibble),.b(b_upper_nibble),.c(c_upper_nibble),.clk(clk), .Data_in(Data_in__upper_nibble),.cfg_write_en(cfg_write_en_6), .Out(Out_lut3_6)); 
+//        LUT3  lut3_7(.a(a_upper_nibble),.b(b_upper_nibble),.c(c_upper_nibble),.clk(clk), .Data_in(Data_in__upper_nibble),.cfg_write_en(cfg_write_en_7), .Out(Out_lut3_7)); 
+              
+//    //6. Upper nibble adders
+//    // negative term in lower lut3, because addition with 2s compliment because limiting not gate   
+//        not two_comp_upperNible(Not_Out_lut3_4,Out_lut3_4);
+//        mux_2 diff_bw_add_sub_UpperNibble(.I0(Out_lut3_4), .I1(Not_Out_lut3_4), .S(UpperNibble_negVal_sel),.O(Wire_UpperNibble_AddSub_Sel_val));
+//        adder_1_bit lut3_45(.a(Wire_UpperNibble_AddSub_Sel_val),.b(Out_lut3_5),.cin(Carry_upperNibble_out),.out(Sum_3),.cout(CarryBetweenAdder_Lut3_45_and_Lut3_67));
+//        adder_1_bit lut3_67(.a(Out_lut3_6),.b(Out_lut3_7),.cin(CarryBetweenAdder_Lut3_45_and_Lut3_67),.out(Sum_4),.cout(Wire_Cout_UpperNibble));
+         
+         
+         
+         
+//    //stage 2
+//    //7. d selectors/muxes
+//        mux_2 dSelector_lut4_01(.I0(Out_lut3_0),.I1(Out_lut3_1),.S(d),.O(Out_mux4_01));
+//        mux_2 dSelector_lut4_23(.I0(Out_lut3_2),.I1(Out_lut3_3),.S(d),.O(Out_mux4_23));
+//        mux_2 dSelector_lut4_45(.I0(Out_lut3_4),.I1(Out_lut3_5),.S(d),.O(Out_mux4_45));
+//        mux_2 dSelector_lut4_67(.I0(Out_lut3_6),.I1(Out_lut3_6),.S(d),.O(Out_mux4_67));
+        
+//    //8. e selector/muxes 
+//         mux_2 dSelector_lut5_03(.I0(Out_mux4_01),.I1(Out_mux4_23),.S(e),.O(Out_mux5_03));
+//         mux_2 dSelector_lut5_47(.I0(Out_mux4_45),.I1(Out_mux4_67),.S(e),.O(Out_mux5_47));
+         
+//    //9. f selector/muxes
+//         mux_2 dSelector_lut6(.I0(Out_mux5_03),.I1(Out_mux5_47),.S(f),.O(O_6)); 
+         
+         
+         
+//    // assign ports
+//        assign   Cout_lower_nibble = Wire_Cout_LowerNibble;
+//        assign   Cout_upper_nibble = Wire_Cout_UpperNibble;
+//        assign   O_5 = Out_mux5_03;
+        
+//endmodule  
+
+module LUT6(clk,a,b,c,d,e,f, Data_in, cfg_write_en_0, cfg_write_en_1, cfg_write_en_2, cfg_write_en_3, cfg_write_en_4, cfg_write_en_5, cfg_write_en_6, cfg_write_en_7, Cin_lower_nibble, Cin_upper_nibble, Carry_select_Int_0,Carry_select_Int_1, LowerNibble_negVal_sel, UpperNibble_negVal_sel, O_6, O_5, Sum_0, Sum_1, Cout_lower_nibble, Sum_2, Sum_3, Cout_upper_nibble);
 
     input logic clk;
-    input logic d,e,f;
-    input logic a_lower_nibble, b_lower_nibble, c_lower_nibble,Data_in__lower_nibble;
-    input logic a_upper_nibble, b_upper_nibble, c_upper_nibble, Data_in__upper_nibble;
+    input logic a,b,c,d,e,f, Data_in;
     input logic cfg_write_en_0, cfg_write_en_1, cfg_write_en_2, cfg_write_en_3, cfg_write_en_4, cfg_write_en_5, cfg_write_en_6, cfg_write_en_7;
     input logic Cin_lower_nibble, Cin_upper_nibble;
     input logic LowerNibble_negVal_sel, UpperNibble_negVal_sel;
@@ -289,10 +378,10 @@ module LUT6(clk,d,e,f, a_lower_nibble, b_lower_nibble, c_lower_nibble, Data_in__
         mux_4 lower_carry_selector(.I0(1'b0),.I1(Cin_lower_nibble),.I2(Cin_lower_nibble),.I3(1'b1),.S(Carry_select_Int_0),.O(Carry_LowerNibble_out));
         
     //2. lower nibble lut3s
-        LUT3  lut3_0(.a(a_lower_nibble),.b(b_lower_nibble),.c(c_lower_nibble),.clk(clk), .Data_in(Data_in__lower_nibble),.cfg_write_en(cfg_write_en_0), .Out(Out_lut3_0));
-        LUT3  lut3_1(.a(a_lower_nibble),.b(b_lower_nibble),.c(c_lower_nibble),.clk(clk), .Data_in(Data_in__lower_nibble),.cfg_write_en(cfg_write_en_1), .Out(Out_lut3_1)); 
-        LUT3  lut3_2(.a(a_lower_nibble),.b(b_lower_nibble),.c(c_lower_nibble),.clk(clk), .Data_in(Data_in__lower_nibble),.cfg_write_en(cfg_write_en_2), .Out(Out_lut3_2)); 
-        LUT3  lut3_3(.a(a_lower_nibble),.b(b_lower_nibble),.c(c_lower_nibble),.clk(clk), .Data_in(Data_in__lower_nibble),.cfg_write_en(cfg_write_en_3), .Out(Out_lut3_3)); 
+        LUT3  lut3_0(.a(a),.b(b),.c(c),.clk(clk), .Data_in(Data_in),.cfg_write_en(cfg_write_en_0), .Out(Out_lut3_0));
+        LUT3  lut3_1(.a(a),.b(b),.c(c),.clk(clk), .Data_in(Data_in),.cfg_write_en(cfg_write_en_1), .Out(Out_lut3_1)); 
+        LUT3  lut3_2(.a(a),.b(b),.c(c),.clk(clk), .Data_in(Data_in),.cfg_write_en(cfg_write_en_2), .Out(Out_lut3_2)); 
+        LUT3  lut3_3(.a(a),.b(b),.c(c),.clk(clk), .Data_in(Data_in),.cfg_write_en(cfg_write_en_3), .Out(Out_lut3_3)); 
               
         
     //3. Lower nibble adders
@@ -307,10 +396,10 @@ module LUT6(clk,d,e,f, a_lower_nibble, b_lower_nibble, c_lower_nibble, Data_in__
         mux_4 Upper_carry_selector(.I0(1'b0),.I1(Cin_upper_nibble),.I2(Wire_Cout_LowerNibble),.I3(1'b1),.S(Carry_select_Int_1),.O(Carry_UpperNibble_out));
         
     //5. upper nibble lut3s
-        LUT3  lut3_4(.a(a_upper_nibble),.b(b_upper_nibble),.c(c_upper_nibble),.clk(clk), .Data_in(Data_in__upper_nibble),.cfg_write_en(cfg_write_en_4), .Out(Out_lut3_4));
-        LUT3  lut3_5(.a(a_upper_nibble),.b(b_upper_nibble),.c(c_upper_nibble),.clk(clk), .Data_in(Data_in__upper_nibble),.cfg_write_en(cfg_write_en_5), .Out(Out_lut3_5)); 
-        LUT3  lut3_6(.a(a_upper_nibble),.b(b_upper_nibble),.c(c_upper_nibble),.clk(clk), .Data_in(Data_in__upper_nibble),.cfg_write_en(cfg_write_en_6), .Out(Out_lut3_6)); 
-        LUT3  lut3_7(.a(a_upper_nibble),.b(b_upper_nibble),.c(c_upper_nibble),.clk(clk), .Data_in(Data_in__upper_nibble),.cfg_write_en(cfg_write_en_7), .Out(Out_lut3_7)); 
+        LUT3  lut3_4(.a(a),.b(b),.c(c),.clk(clk), .Data_in(Data_in),.cfg_write_en(cfg_write_en_4), .Out(Out_lut3_4));
+        LUT3  lut3_5(.a(a),.b(b),.c(c),.clk(clk), .Data_in(Data_in),.cfg_write_en(cfg_write_en_5), .Out(Out_lut3_5)); 
+        LUT3  lut3_6(.a(a),.b(b),.c(c),.clk(clk), .Data_in(Data_in),.cfg_write_en(cfg_write_en_6), .Out(Out_lut3_6)); 
+        LUT3  lut3_7(.a(a),.b(b),.c(c),.clk(clk), .Data_in(Data_in),.cfg_write_en(cfg_write_en_7), .Out(Out_lut3_7)); 
               
     //6. Upper nibble adders
     // negative term in lower lut3, because addition with 2s compliment because limiting not gate   
