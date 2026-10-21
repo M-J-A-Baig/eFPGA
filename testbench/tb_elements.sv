@@ -591,9 +591,38 @@ always #5 clk = ~clk;
         c=0; b=0; a=0;  
         
         
+           #50
+        
+         // 2 adders with cin 1
+         LowerNibble_negVal_sel = 0;
+        Carry_select_Int_0 = 2;
+        Cin_lower_nibble = 1;
+        c=0; b=0; a=0;  
+      
+      UpperNibble_negVal_sel = 0;
+        Carry_select_Int_1 = 2;
+        Cin_upper_nibble = 1;
+        #10
+        $display("Carry_select_Int_1 = %b", Carry_select_Int_1);
+$display("Wire_Cout_LowerNibble = %b", dut.Wire_Cout_LowerNibble);
+$display("Cin_upper_nibble = %b", dut.Cin_upper_nibble);
+$display("Carry_UpperNibble_out = %b", dut.Carry_UpperNibble_out);
+
+$display("Wire_UpperNibble_AddSub_Sel_val = %b", dut.Wire_UpperNibble_AddSub_Sel_val);
+$display("Out_lut3_5 = %b", dut.Out_lut3_5);
+$display("Carry_UpperNibble_out = %b", dut.Carry_UpperNibble_out);
+
+$display("Sum_2 = %b", dut.Sum_2);
+
+
+        
+        
         
         //differentitaing time
         #50
+        
+        
+        
         
         // sub
         Carry_select_Int_0 =2;

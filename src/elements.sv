@@ -394,6 +394,8 @@ module LUT6(clk,a,b,c,d,e,f, Data_in, cfg_write_en_0, cfg_write_en_1, cfg_write_
          adder_1_bit lut3_01(.a(Wire_LowerNibble_AddSub_Sel_val),.b(Out_lut3_1),.cin(Carry_LowerNibble_out),.out(Sum_0),.cout(CarryBetweenAdder_Lut3_01_and_Lut3_23));
          adder_1_bit lut3_23(.a(Out_lut3_2),.b(Out_lut3_3),.cin(CarryBetweenAdder_Lut3_01_and_Lut3_23),.out(Sum_1),.cout(Wire_Cout_LowerNibble));
         
+        
+        
     //4. input carry upper nibble
         mux_4 Upper_carry_selector(.I0(1'b0),.I1(Cin_upper_nibble),.I2(Wire_Cout_LowerNibble),.I3(1'b1),.S(Carry_select_Int_1),.O(Carry_UpperNibble_out));
         
@@ -407,8 +409,8 @@ module LUT6(clk,a,b,c,d,e,f, Data_in, cfg_write_en_0, cfg_write_en_1, cfg_write_
     // negative term in lower lut3, because addition with 2s compliment because limiting not gate   
         not two_comp_upperNible(Not_Out_lut3_4,Out_lut3_4);
         mux_2 diff_bw_add_sub_UpperNibble(.I0(Out_lut3_4), .I1(Not_Out_lut3_4), .S(UpperNibble_negVal_sel),.O(Wire_UpperNibble_AddSub_Sel_val));
-        adder_1_bit lut3_45(.a(Wire_UpperNibble_AddSub_Sel_val),.b(Out_lut3_5),.cin(Carry_upperNibble_out),.out(Sum_3),.cout(CarryBetweenAdder_Lut3_45_and_Lut3_67));
-        adder_1_bit lut3_67(.a(Out_lut3_6),.b(Out_lut3_7),.cin(CarryBetweenAdder_Lut3_45_and_Lut3_67),.out(Sum_4),.cout(Wire_Cout_UpperNibble));
+        adder_1_bit lut3_45(.a(Wire_UpperNibble_AddSub_Sel_val),.b(Out_lut3_5),.cin(Carry_UpperNibble_out),.out(Sum_2),.cout(CarryBetweenAdder_Lut3_45_and_Lut3_67));
+        adder_1_bit lut3_67(.a(Out_lut3_6),.b(Out_lut3_7),.cin(CarryBetweenAdder_Lut3_45_and_Lut3_67),.out(Sum_3),.cout(Wire_Cout_UpperNibble));
          
          
          

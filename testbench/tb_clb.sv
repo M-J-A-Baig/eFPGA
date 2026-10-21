@@ -202,7 +202,6 @@ module tb_clb_1_bit;
         #50
         
         //normal ops add cin 1
-        // sub and a distant adders
         LowerNibble_negVal_sel = 0;
         Carry_select_Int_0 = 3;
         c=0; b=0; a=0;  
@@ -217,21 +216,25 @@ module tb_clb_1_bit;
         Cin_lower_nibble = 0;
         c=0; b=0; a=0;  
         
-        
-        //differentitaing time
+           //differentitaing time
         #50
-        
         
          // 2 adders with cin 1
          LowerNibble_negVal_sel = 0;
         Carry_select_Int_0 = 2;
         Cin_lower_nibble = 1;
         c=0; b=0; a=0;  
+      
+      UpperNibble_negVal_sel = 0;
+        Carry_select_Int_1 = 2;
         
+      
         
         
         //differentitaing time
         #50
+        
+     
         
         // sub
         Carry_select_Int_0 =2;
@@ -243,6 +246,13 @@ module tb_clb_1_bit;
         
         //differentitaing time
         #50
+        
+        
+        
+        
+        
+        
+        
         
         
         //config time
