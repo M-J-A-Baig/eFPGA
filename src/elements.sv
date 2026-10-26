@@ -441,7 +441,7 @@ endmodule
 
 
 
-//8bit adder
+//16bit adder
 module adder_16bit(a, b, Cin, Out, Cout);
     
     input logic [15:0] a,b;
@@ -476,8 +476,7 @@ endmodule
 
 
 
-//16bit Add
-
+//8bit Add
 module adder_8bit(a, b, Cin, Out, Cout);
     
     input logic [7:0] a,b;
@@ -498,4 +497,33 @@ module adder_8bit(a, b, Cin, Out, Cout);
     adder_1_bit adder7(.a(a[7]), .b(b[7]), .cin(Int_Cout_6), .out(Out[7]), .cout(Cout));
     
      
+endmodule
+
+
+
+
+//16 bit bitwise And
+module And_16bit_AND(a,b,c);
+    
+    input logic [15:0] a,b;
+    output logic [15:0] c;
+    
+    and and0(c[0], a[0], b[0]);
+    and and1(c[1], a[1], b[1]);
+    and and2(c[2], a[2], b[2]);
+    and and3(c[3], a[3], b[3]);
+    and and4(c[4], a[4], b[4]);
+    and and5(c[5], a[5], b[5]);
+    and and6(c[6], a[6], b[6]);
+    and and7(c[7], a[7], b[7]);
+    and and8(c[8], a[8], b[8]);
+    and and9(c[9], a[9], b[9]);
+    and and10(c[10], a[10], b[10]);
+    and and11(c[11], a[11], b[11]);
+    and and12(c[12], a[12], b[12]);
+    and and13(c[13], a[13], b[13]);
+    and and14(c[14], a[14], b[14]);
+    and and15(c[15], a[15], b[15]);
+    
+    
 endmodule

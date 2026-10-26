@@ -681,6 +681,8 @@ $display("Sum_2 = %b", dut.Sum_2);
     
     $monitor("a= %d, b= %d, Cin=%d, Out= %d, Cout=%d", a,b,Cin,Out,Cout);
     
+    $finish;
+    
     end
     
  
@@ -690,7 +692,7 @@ $display("Sum_2 = %b", dut.Sum_2);
  
  
  
-  module tb_adder_16bit;
+ module tb_adder_16bit;
  
  logic [15:0] a, b, Out;
  logic Cin,Cout;
@@ -725,8 +727,39 @@ $display("Sum_2 = %b", dut.Sum_2);
     
     $monitor("a= %d, b= %d, Cin=%d, Out= %d, Cout=%d", a,b,Cin,Out,Cout);
     
+    $finish;
+    
     end
     
  
  
+ endmodule
+ 
+ 
+ 
+ 
+ module tb_and_16bit;
+ 
+ logic [15:0] a,b,c;
+ 
+ int i;
+ 
+ And_16bit_AND dut(.a(a),.b(b),.c(c));
+ 
+ initial
+    begin
+        $dumpfile("dump.vcd");
+        $dumpvars(0, tb_and_16bit);
+        
+        
+        for(i = 0; i< 5; i++)
+            begin
+                a = $random;
+                b = $random;
+                #10;
+            end
+        
+        $finish;
+     
+    end 
  endmodule
