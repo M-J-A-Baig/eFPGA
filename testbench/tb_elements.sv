@@ -642,3 +642,91 @@ $display("Sum_2 = %b", dut.Sum_2);
       end   
      
  endmodule
+ 
+ 
+ 
+ 
+ module tb_adder_8bit;
+ 
+ logic [7:0] a, b, Out;
+ logic Cin,Cout;
+ 
+ adder_8bit dut (.a(a), .b(b), .Cin(Cin), .Out(Out), .Cout(Cout));
+ 
+ 
+ initial
+    begin
+     $dumpfile("dump.vcd");
+     $dumpvars(0, tb_adder_8bit);
+     
+     
+     
+     a = 25; b = 15; Cin = 1;
+     #10
+     a = 23; b = 10; Cin = 0;
+     #10
+     a = 5; b = 30; Cin = 1;
+     #10
+     a = 8; b = 40; Cin = 1;
+     #10
+     a = 30; b = 34; Cin = 1;
+     #10
+     a = 10; b = ~5; Cin = 1; //5
+     #10
+     a = ~15; b = 30; Cin = 1; //15
+     #10
+     a = 30; b = ~34; Cin = 1; //-4
+     #10
+     
+    
+    $monitor("a= %d, b= %d, Cin=%d, Out= %d, Cout=%d", a,b,Cin,Out,Cout);
+    
+    end
+    
+ 
+ 
+ endmodule
+ 
+ 
+ 
+ 
+  module tb_adder_16bit;
+ 
+ logic [15:0] a, b, Out;
+ logic Cin,Cout;
+ 
+ adder_16bit dut (.a(a), .b(b), .Cin(Cin), .Out(Out), .Cout(Cout));
+ 
+ 
+ initial
+    begin
+     $dumpfile("dump.vcd");
+     $dumpvars(0, tb_adder_16bit);
+     
+     
+     
+     a = 125; b = 105; Cin = 1;
+     #10
+     a = 123; b = 100; Cin = 0;
+     #10
+     a = 5; b = 230; Cin = 1;
+     #10
+     a = 180; b = 140; Cin = 1;
+     #10
+     a = 130; b = 34; Cin = 1;
+     #10
+     a = 100; b = ~15; Cin = 1; //85
+     #10
+     a = ~150; b = 30; Cin = 1; //-120
+     #10
+     a = 300; b = ~34; Cin = 1; //256
+     #10
+     
+    
+    $monitor("a= %d, b= %d, Cin=%d, Out= %d, Cout=%d", a,b,Cin,Out,Cout);
+    
+    end
+    
+ 
+ 
+ endmodule

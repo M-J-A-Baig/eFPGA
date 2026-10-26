@@ -437,3 +437,65 @@ module LUT6(clk,a,b,c,d,e,f, Data_in, cfg_write_en_0, cfg_write_en_1, cfg_write_
         assign   O_5 = Out_mux5_03;
         
 endmodule  
+
+
+
+
+//8bit adder
+module adder_16bit(a, b, Cin, Out, Cout);
+    
+    input logic [15:0] a,b;
+    input logic Cin;
+    output logic [15:0] Out;
+    output logic Cout;
+    
+    logic Int_Cout_0, Int_Cout_1, Int_Cout_2, Int_Cout_3, Int_Cout_4, Int_Cout_5, Int_Cout_6, Int_Cout_7;
+    logic Int_Cout_8, Int_Cout_9, Int_Cout_10, Int_Cout_11, Int_Cout_12, Int_Cout_13, Int_Cout_14, Int_Cout_15;
+
+
+    adder_1_bit adder0(.a(a[0]), .b(b[0]), .cin(Cin), .out(Out[0]), .cout(Int_Cout_0));
+    adder_1_bit adder1(.a(a[1]), .b(b[1]), .cin(Int_Cout_0), .out(Out[1]), .cout(Int_Cout_1));
+    adder_1_bit adder2(.a(a[2]), .b(b[2]), .cin(Int_Cout_1), .out(Out[2]), .cout(Int_Cout_2));
+    adder_1_bit adder3(.a(a[3]), .b(b[3]), .cin(Int_Cout_2), .out(Out[3]), .cout(Int_Cout_3));
+    adder_1_bit adder4(.a(a[4]), .b(b[4]), .cin(Int_Cout_3), .out(Out[4]), .cout(Int_Cout_4));
+    adder_1_bit adder5(.a(a[5]), .b(b[5]), .cin(Int_Cout_4), .out(Out[5]), .cout(Int_Cout_5));
+    adder_1_bit adder6(.a(a[6]), .b(b[6]), .cin(Int_Cout_5), .out(Out[6]), .cout(Int_Cout_6));
+    adder_1_bit adder7(.a(a[7]), .b(b[7]), .cin(Int_Cout_6), .out(Out[7]), .cout(Int_Cout_7));
+    adder_1_bit adder8(.a(a[8]), .b(b[8]), .cin(Int_Cout_7), .out(Out[8]), .cout(Int_Cout_8));
+    adder_1_bit adder9(.a(a[9]), .b(b[9]), .cin(Int_Cout_8), .out(Out[9]), .cout(Int_Cout_9));
+    adder_1_bit adder10(.a(a[10]), .b(b[10]), .cin(Int_Cout_9), .out(Out[10]), .cout(Int_Cout_10));
+    adder_1_bit adder11(.a(a[11]), .b(b[11]), .cin(Int_Cout_10), .out(Out[11]), .cout(Int_Cout_11));
+    adder_1_bit adder12(.a(a[12]), .b(b[12]), .cin(Int_Cout_11), .out(Out[12]), .cout(Int_Cout_12));
+    adder_1_bit adder13(.a(a[13]), .b(b[13]), .cin(Int_Cout_12), .out(Out[13]), .cout(Int_Cout_13));
+    adder_1_bit adder14(.a(a[14]), .b(b[14]), .cin(Int_Cout_13), .out(Out[14]), .cout(Int_Cout_14));
+    adder_1_bit adder15(.a(a[15]), .b(b[15]), .cin(Int_Cout_14), .out(Out[15]), .cout(Cout));
+    
+     
+endmodule
+
+
+
+
+//16bit Add
+
+module adder_8bit(a, b, Cin, Out, Cout);
+    
+    input logic [7:0] a,b;
+    input logic Cin;
+    output logic [7:0] Out;
+    output logic Cout;
+    
+    logic Int_Cout_0, Int_Cout_1, Int_Cout_2, Int_Cout_3, Int_Cout_4, Int_Cout_5, Int_Cout_6, Int_Cout_7;
+
+
+    adder_1_bit adder0(.a(a[0]), .b(b[0]), .cin(Cin), .out(Out[0]), .cout(Int_Cout_0));
+    adder_1_bit adder1(.a(a[1]), .b(b[1]), .cin(Int_Cout_0), .out(Out[1]), .cout(Int_Cout_1));
+    adder_1_bit adder2(.a(a[2]), .b(b[2]), .cin(Int_Cout_1), .out(Out[2]), .cout(Int_Cout_2));
+    adder_1_bit adder3(.a(a[3]), .b(b[3]), .cin(Int_Cout_2), .out(Out[3]), .cout(Int_Cout_3));
+    adder_1_bit adder4(.a(a[4]), .b(b[4]), .cin(Int_Cout_3), .out(Out[4]), .cout(Int_Cout_4));
+    adder_1_bit adder5(.a(a[5]), .b(b[5]), .cin(Int_Cout_4), .out(Out[5]), .cout(Int_Cout_5));
+    adder_1_bit adder6(.a(a[6]), .b(b[6]), .cin(Int_Cout_5), .out(Out[6]), .cout(Int_Cout_6));
+    adder_1_bit adder7(.a(a[7]), .b(b[7]), .cin(Int_Cout_6), .out(Out[7]), .cout(Cout));
+    
+     
+endmodule
