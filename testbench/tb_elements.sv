@@ -251,6 +251,68 @@ endmodule
 
 
 
+
+module tb_mux8;
+  reg I0,I1,I2,I3,I4,I5,I6,I7;
+  reg [2:0]S;
+  wire O;
+  
+  mux_8  dut(
+    .I0(I0),
+    .I1(I1),
+    .I2(I2),
+    .I3(I3),
+    .I4(I4),
+    .I5(I5),
+    .I6(I6),
+    .I7(I7),
+    .S(S),
+    .O(O)
+  );
+  
+  always #10 S = ~S; // others
+
+  // 2. Stimulus Process
+  initial begin
+    $dumpfile("dump.vcd");
+    $dumpvars(0, tb_mux8);
+
+    // Set 1
+    I0=1; I1=0; I2=1; I3=0;
+    I4=1; I5=0; I6=1; I7=0;
+    
+    S=0; #10
+    S=1; #10
+    S=2; #10
+    S=3; #10
+    S=4; #10
+    S=5; #10
+    S=6; #10
+    S=7; #10
+    
+    // Set 2
+    I0=0; I1=1; I2=0; I3=1;
+    I4=0; I5=1; I6=0; I7=1;
+    
+    S=0; #10
+    S=1; #10
+    S=2; #10
+    S=3; #10
+    S=4; #10
+    S=5; #10
+    S=6; #10
+    S=7; #10
+    #10
+    
+    #150
+    $finish;
+  end
+
+endmodule
+
+
+
+
 module tb_demux();
     logic IN;
     logic [2:0]Select;
