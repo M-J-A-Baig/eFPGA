@@ -503,7 +503,7 @@ endmodule
 
 
 //16 bit bitwise And
-module And_16bit_AND(a,b,c);
+module AND_16bit(a,b,c);
     
     input logic [15:0] a,b;
     output logic [15:0] c;
@@ -524,6 +524,45 @@ module And_16bit_AND(a,b,c);
     and and13(c[13], a[13], b[13]);
     and and14(c[14], a[14], b[14]);
     and and15(c[15], a[15], b[15]);
+        
+endmodule
+
+
+
+
+//16 bit or
+module OR_16bit(c,a,b);
+
+    input logic [15:0] a,b;
+    output logic [15:0]c;
     
+    genvar i;
+    
+    generate
+        for (i =0; i<=15; i++)
+            begin : OrGates
+                or OrGate(c[i],a[i],b[i]);
+            end 
+    endgenerate;
+    
+endmodule
+
+
+
+
+//16 bit not
+module NOT_16bit(c,a);
+
+    input logic [15:0] a;
+    output logic [15:0] c;
+    
+    genvar i;
+    
+    generate 
+        for(i=0; i<=15; i++)
+            begin : NotGates
+                not NotGate(c[i], a[i]);    
+            end
+    endgenerate;
     
 endmodule
