@@ -29,10 +29,10 @@ module ALU(ALU_mode,A,B,CarryIn,Out_1,Out_2,CarryOut,ZeroFlag);
     
     
     //
-    NOT_16bit(c,a);
-    OR_16bit(c,a,b);
-    AND_16bit(a,b,c);
-    adder_16bit(a, b, Cin, Out, Cout);
+//    NOT_16bit(c,a);
+//    OR_16bit(c,a,b);
+//    AND_16bit(a,b,c);
+//    adder_16bit(a, b, Cin, Out, Cout);
     
 
 
