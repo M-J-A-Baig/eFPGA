@@ -15,25 +15,53 @@
 // 
 // Revision:
 // Revision 0.01 - File Created
-// Additional Comments:
+// Additional Comments: 
 // 
 //////////////////////////////////////////////////////////////////////////////////
+//16 bit zero detector
+//module ZeroDetector(C,A);
 
-
-module ALU(ALU_mode,A,B,CarryIn,Out_1,Out_2,CarryOut,ZeroFlag);
-
-    input logic ALU_mode, CarryIn;
-    input logic [15:0] A,B;
-    output logic [15:0] Out_1,Out_2;
-    output logic CarryOut, ZeroFlag;
+//    input logic [16:0] A;
+//    output logic [16:0] C;
     
     
-    //
-//    NOT_16bit(c,a);
-//    OR_16bit(c,a,b);
-//    AND_16bit(a,b,c);
-//    adder_16bit(a, b, Cin, Out, Cout);
+
+//endmodule
+
+
+
+//module ALU(ALU_mode, A, B, CarryIn, cfg_ALU_CarrySel, Out_1, Out_2, CarryOut, ZeroFlag);
+
+////    input logic ALU_mode, CarryIn;
+////    input logic [1:0] cfg_ALU_CarrySel;
+////    input logic [15:0] A,B;
+////    output logic [15:0] Out_1,Out_2;
+////    output logic CarryOut, ZeroFlag;
+    
+////    //wires
+////    logic [15:0] B_selected;
+////    logic [15:0] Out_Not, Out_OR, Out_AND, Out_Adder;
+////    logic ALU_Carry_select;
+    
+    
+    
+////    // carry mux
+////    mux_4 Carry_select_Mux(.I0(1'b0),.I1(1'b1),.I2(CarryIn),.I3(CarryIn),.S(cfg_ALU_CarrySel), .O(ALU_Carry_select) );
+    
+////    //B input select logic
+    
+////    //ALU OPS
+////    NOT_16bit ALU_NOT_Gate(.c(Out_Not), .a(A));
+////    OR_16bit ALU_OR_Gate( .c(Out_OR), .a(A), .b(B_selected) );
+////    AND_16bit ALU_AND_Gate(.a(A), .b(B_selected), .c(Out_AND));
+////    adder_16bit ALU_ADDER_Gate(.a(A), .b(B_selected), .Cin(ALU_Carry_select), .Out(Out_Adder), .Cout(CarryOut));
+    
+    
+    
+////    //zero flag generation
     
 
-
-endmodule
+////    // out mux
+////    //1 -> Out_Not
+////    //2 -> Out_OR
+//endmodule

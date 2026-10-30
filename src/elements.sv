@@ -588,3 +588,13 @@ endmodule
 
 
 
+//and 4 primitive
+module AND4(Z, A, B, C, D);
+
+    input logic A,B,C,D;
+    output logic Z;
+    
+    always_comb
+        Z = A & B & C & D;
+        
+endmodule

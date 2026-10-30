@@ -877,3 +877,33 @@ $display("Sum_2 = %b", dut.Sum_2);
         end
  
  endmodule
+ 
+ 
+ 
+ 
+ module tb_AND4;
+ 
+ logic A, B, C, D, Z;
+ 
+ AND4 dut(.Z(Z), .A(A), .B(B), .C(C), .D(D));
+ 
+ integer i;
+ 
+ initial
+    begin
+         $dumpfile("dump.vcd");
+         $dumpvars(0, tb_AND4);
+            
+         for(i = 0; i< 50; i++)
+                begin
+                     A = $random;
+                     B = $random;
+                     C = $random;
+                     D = $random;
+                    #10;
+                end
+            $finish;   
+    end
+ 
+ 
+ endmodule
