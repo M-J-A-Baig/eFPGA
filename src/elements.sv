@@ -598,3 +598,16 @@ module AND4(Z, A, B, C, D);
         Z = A & B & C & D;
         
 endmodule
+
+
+
+//nor 4 primitive
+module NOR4(Z, A, B, C, D);
+
+    input logic A,B,C,D;
+    output logic Z;
+    
+    always_comb
+        Z = ~(A | B | C | D);
+        
+endmodule

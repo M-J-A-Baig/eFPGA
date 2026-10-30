@@ -904,6 +904,32 @@ $display("Sum_2 = %b", dut.Sum_2);
                 end
             $finish;   
     end
+ endmodule
  
  
+ 
+ 
+  module tb_NOR4;
+ 
+     logic A, B, C, D, Z;
+     
+     NOR4 dut(.Z(Z), .A(A), .B(B), .C(C), .D(D));
+     
+     integer i;
+     
+     initial
+        begin
+             $dumpfile("dump.vcd");
+             $dumpvars(0, tb_NOR4);
+                
+             for(i = 0; i< 50; i++)
+                    begin
+                         A = $random;
+                         B = $random;
+                         C = $random;
+                         D = $random;
+                        #10;
+                    end
+                $finish;   
+        end
  endmodule

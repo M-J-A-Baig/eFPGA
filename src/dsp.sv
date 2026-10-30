@@ -19,14 +19,22 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 //16 bit zero detector
-//module ZeroDetector(C,A);
+module ZeroDetector(C,A);
 
-//    input logic [16:0] A;
-//    output logic [16:0] C;
+    input logic [16:0] A;
+    output logic  C;
     
+    //wires
+    logic out_nor_1, out_nor_2, out_nor_3, out_nor_4;
     
-
-//endmodule
+    NOR4 NorGate_1(.Z(out_nor_1), .A(A[0]), .B(A[1]), .C(A[2]), .D(A[3]));
+    NOR4 NorGate_2(.Z(out_nor_2), .A(A[4]), .B(A[5]), .C(A[6]), .D(A[7]));
+    NOR4 NorGate_3(.Z(out_nor_3), .A(A[8]), .B(A[9]), .C(A[10]), .D(A[11]));
+    NOR4 NorGate_4(.Z(out_nor_4), .A(A[12]), .B(A[13]), .C(A[14]), .D(A[15]));
+    
+    AND4 AndGate(.Z(C), .A(out_nor_1), .B(out_nor_2), .C(out_nor_3), .D(out_nor_4));
+        
+endmodule
 
 
 
