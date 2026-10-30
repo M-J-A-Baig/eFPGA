@@ -102,21 +102,21 @@ module mux_4 (I0,I1,I2,I3,S,O);
 
 
 
-////8:1 mux 
-//module mux_8 (I0,I1,I2,I3,I4,I5,I6,I7,S,O);
-//  input wire I0,I1,I2,I3,I4,I5,I6,I7;
-//  input wire [2:0]S;
-//  output wire O;
+//8:1 mux 
+module mux_8 (I0,I1,I2,I3,I4,I5,I6,I7,S,O);
+  input wire I0,I1,I2,I3,I4,I5,I6,I7;
+  input wire [2:0]S;
+  output wire O;
   
-//      assign O = (S == 7)? I7 : 
-//                 (S == 6)? I6 : 
-//                 (S == 5)? I5 : 
-//                 (S == 4)? I4 :
-//                 (S == 3)? I3 : 
-//                 (S == 2)? I2 : 
-//                 (S == 1)? I1 : 
-//                           I0 ;  
-// endmodule
+      assign O = (S == 7)? I7 : 
+                 (S == 6)? I6 : 
+                 (S == 5)? I5 : 
+                 (S == 4)? I4 :
+                 (S == 3)? I3 : 
+                 (S == 2)? I2 : 
+                 (S == 1)? I1 : 
+                           I0 ;  
+ endmodule
 
 
 
