@@ -102,21 +102,21 @@ module mux_4 (I0,I1,I2,I3,S,O);
 
 
 
-//8:1 mux 
-module mux_8 (I0,I1,I2,I3,I4,I5,I6,I7,S,O);
-  input wire I0,I1,I2,I3,I4,I5,I6,I7;
-  input wire [2:0]S;
-  output wire O;
+////8:1 mux 
+//module mux_8 (I0,I1,I2,I3,I4,I5,I6,I7,S,O);
+//  input wire I0,I1,I2,I3,I4,I5,I6,I7;
+//  input wire [2:0]S;
+//  output wire O;
   
-      assign O = (S == 7)? I7 : 
-                 (S == 6)? I6 : 
-                 (S == 5)? I5 : 
-                 (S == 4)? I4 :
-                 (S == 3)? I3 : 
-                 (S == 2)? I2 : 
-                 (S == 1)? I1 : 
-                           I0 ;  
- endmodule
+//      assign O = (S == 7)? I7 : 
+//                 (S == 6)? I6 : 
+//                 (S == 5)? I5 : 
+//                 (S == 4)? I4 :
+//                 (S == 3)? I3 : 
+//                 (S == 2)? I2 : 
+//                 (S == 1)? I1 : 
+//                           I0 ;  
+// endmodule
 
 
 
@@ -610,4 +610,31 @@ module NOR4(Z, A, B, C, D);
     always_comb
         Z = ~(A | B | C | D);
         
+endmodule
+
+
+
+
+//16 bit 8 input mux
+module Mux8_16bit(O, A, B, C, D, E, F, G, H, S);
+    
+    input logic [7:0] A,B,C,D,E,F,G,H;
+    input logic [2:0] S;
+    output logic [7:0] O;
+    
+    //wire
+    logic [7:0] upper_mux_out, lower_mux_out;
+
+    genvar i;
+    
+    generate
+        for(i = 0; i<=7; i++)
+            begin: dspMux
+                mux_4 upper_mux(.I0(A[i]), .I1(B[i]), .I2(C[i]), .I3(D[i]), .S(S[1:0]), .O(upper_mux_out[i]));
+                mux_4 lower_mux(.I0(E[i]), .I1(F[i]), .I2(G[i]), .I3(H[i]), .S(S[1:0]), .O(lower_mux_out[i]));
+                
+                mux_2 outer_mux(.I0(upper_mux_out[i]), .I1(lower_mux_out[i]), .S(S[2]) , .O(O[i]));
+            end   
+    endgenerate
+
 endmodule

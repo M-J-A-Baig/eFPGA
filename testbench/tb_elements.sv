@@ -933,3 +933,39 @@ $display("Sum_2 = %b", dut.Sum_2);
                 $finish;   
         end
  endmodule
+ 
+ 
+ 
+ 
+   module tb_Mux8_16bit;
+ 
+    logic [7:0] A,B,C,D,E,F,G,H;
+    logic [2:0] S;
+    logic [7:0] O;
+     
+     Mux8_16bit dut(.O(O), .A(A), .B(B), .C(C), .D(D), .E(E), .F(F), .G(G), .H(H), .S(S));
+     
+     integer i;
+     
+     initial
+        begin
+             $dumpfile("dump.vcd");
+             $dumpvars(0, tb_Mux8_16bit);
+                
+             for(i = 0; i< 50; i++)
+                    begin
+                         A = $random;
+                         B = $random;
+                         C = $random;
+                         D = $random;
+                         E = $random;
+                         F = $random;
+                         G = $random;
+                         H = $random;
+                         
+                         S = $random;
+                        #10;
+                    end
+                $finish;   
+        end
+ endmodule
