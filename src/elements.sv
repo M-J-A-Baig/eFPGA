@@ -72,16 +72,9 @@ module mux_2 (I0,I1,S,O);
   input wire I0,I1;
   input wire S;
   output reg O;
-  
-  
+    
     assign O = (S == 0)? I0 : I1;
-//    always_comb begin
-//        case (S)
-//            1'b1:   O = I1;
-//            default: O = I0;
-//        endcase
-//end
-  
+
  endmodule
 
 
@@ -460,16 +453,16 @@ endmodule
 
 
 
-//16bit adder
-module adder_16bit(a, b, Cin, Out, Cout);
+//17bit adder
+module adder_17bit(a, b, Cin, Out, Cout);
     
-    input logic [15:0] a,b;
+    input logic [16:0] a,b;
     input logic Cin;
-    output logic [15:0] Out;
+    output logic [16:0] Out;
     output logic Cout;
     
     logic Int_Cout_0, Int_Cout_1, Int_Cout_2, Int_Cout_3, Int_Cout_4, Int_Cout_5, Int_Cout_6, Int_Cout_7;
-    logic Int_Cout_8, Int_Cout_9, Int_Cout_10, Int_Cout_11, Int_Cout_12, Int_Cout_13, Int_Cout_14, Int_Cout_15;
+    logic Int_Cout_8, Int_Cout_9, Int_Cout_10, Int_Cout_11, Int_Cout_12, Int_Cout_13, Int_Cout_14, Int_Cout_15, Int_Cout_16;
 
 
     adder_1_bit adder0(.a(a[0]), .b(b[0]), .cin(Cin), .out(Out[0]), .cout(Int_Cout_0));
@@ -487,7 +480,8 @@ module adder_16bit(a, b, Cin, Out, Cout);
     adder_1_bit adder12(.a(a[12]), .b(b[12]), .cin(Int_Cout_11), .out(Out[12]), .cout(Int_Cout_12));
     adder_1_bit adder13(.a(a[13]), .b(b[13]), .cin(Int_Cout_12), .out(Out[13]), .cout(Int_Cout_13));
     adder_1_bit adder14(.a(a[14]), .b(b[14]), .cin(Int_Cout_13), .out(Out[14]), .cout(Int_Cout_14));
-    adder_1_bit adder15(.a(a[15]), .b(b[15]), .cin(Int_Cout_14), .out(Out[15]), .cout(Cout));
+    adder_1_bit adder15(.a(a[15]), .b(b[15]), .cin(Int_Cout_14), .out(Out[15]), .cout(Int_Cout_15));
+    adder_1_bit adder16(.a(a[16]), .b(b[16]), .cin(Int_Cout_15), .out(Out[16]), .cout(Cout));
     
      
 endmodule
@@ -495,15 +489,15 @@ endmodule
 
 
 
-//8bit Add
-module adder_8bit(a, b, Cin, Out, Cout);
+//9bit Add
+module adder_9bit(a, b, Cin, Out, Cout);
     
-    input logic [7:0] a,b;
+    input logic [8:0] a,b;
     input logic Cin;
-    output logic [7:0] Out;
+    output logic [8:0] Out;
     output logic Cout;
     
-    logic Int_Cout_0, Int_Cout_1, Int_Cout_2, Int_Cout_3, Int_Cout_4, Int_Cout_5, Int_Cout_6, Int_Cout_7;
+    logic Int_Cout_0, Int_Cout_1, Int_Cout_2, Int_Cout_3, Int_Cout_4, Int_Cout_5, Int_Cout_6, Int_Cout_7, Int_Cout_8;
 
 
     adder_1_bit adder0(.a(a[0]), .b(b[0]), .cin(Cin), .out(Out[0]), .cout(Int_Cout_0));
@@ -513,7 +507,8 @@ module adder_8bit(a, b, Cin, Out, Cout);
     adder_1_bit adder4(.a(a[4]), .b(b[4]), .cin(Int_Cout_3), .out(Out[4]), .cout(Int_Cout_4));
     adder_1_bit adder5(.a(a[5]), .b(b[5]), .cin(Int_Cout_4), .out(Out[5]), .cout(Int_Cout_5));
     adder_1_bit adder6(.a(a[6]), .b(b[6]), .cin(Int_Cout_5), .out(Out[6]), .cout(Int_Cout_6));
-    adder_1_bit adder7(.a(a[7]), .b(b[7]), .cin(Int_Cout_6), .out(Out[7]), .cout(Cout));
+    adder_1_bit adder7(.a(a[7]), .b(b[7]), .cin(Int_Cout_6), .out(Out[7]), .cout(Int_Cout_7));
+    adder_1_bit adder8(.a(a[8]), .b(b[8]), .cin(Int_Cout_7), .out(Out[8]), .cout(Cout));
     
      
 endmodule
@@ -521,11 +516,11 @@ endmodule
 
 
 
-//16 bit bitwise And
-module AND_16bit(a,b,c);
+//17 bit bitwise And
+module AND_17bit(a,b,c);
     
-    input logic [15:0] a,b;
-    output logic [15:0] c;
+    input logic [16:0] a,b;
+    output logic [16:0] c;
     
     and and0(c[0], a[0], b[0]);
     and and1(c[1], a[1], b[1]);
@@ -543,22 +538,23 @@ module AND_16bit(a,b,c);
     and and13(c[13], a[13], b[13]);
     and and14(c[14], a[14], b[14]);
     and and15(c[15], a[15], b[15]);
+    and and16(c[16], a[16], b[16]);
         
 endmodule
 
 
 
 
-//16 bit or
-module OR_16bit(c,a,b);
+//17 bit or
+module OR_17bit(c,a,b);
 
-    input logic [15:0] a,b;
-    output logic [15:0]c;
+    input logic [16:0] a,b;
+    output logic [16:0]c;
     
     genvar i;
     
     generate
-        for (i =0; i<=15; i++)
+        for (i =0; i<=16; i++)
             begin : OrGates
                 or OrGate(c[i],a[i],b[i]);
             end 
@@ -569,16 +565,16 @@ endmodule
 
 
 
-//16 bit not
-module NOT_16bit(c,a);
+//17 bit not
+module NOT_17bit(c,a);
 
-    input logic [15:0] a;
-    output logic [15:0] c;
+    input logic [16:0] a;
+    output logic [16:0] c;
     
     genvar i;
     
     generate 
-        for(i=0; i<=15; i++)
+        for(i=0; i<=16; i++)
             begin : NotGates
                 not NotGate(c[i], a[i]);    
             end
@@ -615,26 +611,49 @@ endmodule
 
 
 
-//16 bit 8 input mux
-module Mux8_16bit(O, A, B, C, D, E, F, G, H, S);
+//17 bit 8 input mux
+module Mux8_17bit(O, A, B, C, D, E, F, G, H, S);
     
-    input logic [7:0] A,B,C,D,E,F,G,H;
+    input logic [16:0] A,B,C,D,E,F,G,H;
     input logic [2:0] S;
-    output logic [7:0] O;
+    output logic [16:0] O;
     
     //wire
-    logic [7:0] upper_mux_out, lower_mux_out;
+    logic [16:0] upper_mux_out, lower_mux_out;
+    
 
     genvar i;
     
     generate
-        for(i = 0; i<=7; i++)
+        for(i = 0; i<=16; i++)
             begin: dspMux
-                mux_4 upper_mux(.I0(A[i]), .I1(B[i]), .I2(C[i]), .I3(D[i]), .S(S[1:0]), .O(upper_mux_out[i]));
-                mux_4 lower_mux(.I0(E[i]), .I1(F[i]), .I2(G[i]), .I3(H[i]), .S(S[1:0]), .O(lower_mux_out[i]));
+                mux_4 upper_mux(.I0(A[i]), .I1(B[i]), .I2(C[i]), .I3(D[i]), .S(S[1:0]), .O(lower_mux_out[i]));
+                mux_4 lower_mux(.I0(E[i]), .I1(F[i]), .I2(G[i]), .I3(H[i]), .S(S[1:0]), .O(upper_mux_out[i]));
                 
-                mux_2 outer_mux(.I0(upper_mux_out[i]), .I1(lower_mux_out[i]), .S(S[2]) , .O(O[i]));
+                mux_2 outer_mux(.I0(lower_mux_out[i]), .I1(upper_mux_out[i]), .S(S[2]) , .O(O[i]));            
             end   
     endgenerate
 
 endmodule
+
+
+
+
+//9 bit 2 input mux
+module mux2_9bit(A,B,S,O);
+  
+  input logic [8:0] A,B;
+  input logic S;
+  output logic [8:0] O;
+   
+    genvar i;
+    
+    generate
+        for(i = 0; i<=8; i++)
+            begin: bit9_mux
+                 mux_2 mux2_9bit(.I0(A[i]), .I1(B[i]), .S(S), .O(O[i]));
+                 
+            end
+    endgenerate
+
+ endmodule

@@ -708,18 +708,18 @@ $display("Sum_2 = %b", dut.Sum_2);
  
  
  
- module tb_adder_8bit;
+ module tb_adder_9bit;
  
- logic [7:0] a, b, Out;
+ logic [8:0] a, b, Out;
  logic Cin,Cout;
  
- adder_8bit dut (.a(a), .b(b), .Cin(Cin), .Out(Out), .Cout(Cout));
+ adder_9bit dut (.a(a), .b(b), .Cin(Cin), .Out(Out), .Cout(Cout));
  
  
  initial
     begin
      $dumpfile("dump.vcd");
-     $dumpvars(0, tb_adder_8bit);
+     $dumpvars(0, tb_adder_9bit);
      
      
      
@@ -754,18 +754,18 @@ $display("Sum_2 = %b", dut.Sum_2);
  
  
  
- module tb_adder_16bit;
+ module tb_adder_17bit;
  
- logic [15:0] a, b, Out;
+ logic [16:0] a, b, Out;
  logic Cin,Cout;
  
- adder_16bit dut (.a(a), .b(b), .Cin(Cin), .Out(Out), .Cout(Cout));
+ adder_17bit dut (.a(a), .b(b), .Cin(Cin), .Out(Out), .Cout(Cout));
  
  
  initial
     begin
      $dumpfile("dump.vcd");
-     $dumpvars(0, tb_adder_16bit);
+     $dumpvars(0, tb_adder_17bit);
      
      
      
@@ -781,7 +781,7 @@ $display("Sum_2 = %b", dut.Sum_2);
      #10
      a = 100; b = ~15; Cin = 1; //85
      #10
-     a = ~150; b = 30; Cin = 1; //-120
+     a = 150; b = 30; Cin = 1; //-120
      #10
      a = 300; b = ~34; Cin = 1; //256
      #10
@@ -800,17 +800,17 @@ $display("Sum_2 = %b", dut.Sum_2);
  
  
  
- module tb_and_16bit;
+ module tb_and_17bit;
  
- logic [15:0] a,b,c;
+ logic [16:0] a,b,c;
  int i;
  
- AND_16bit dut(.a(a),.b(b),.c(c));
+ AND_17bit dut(.a(a),.b(b),.c(c));
  
  initial
     begin
         $dumpfile("dump.vcd");
-        $dumpvars(0, tb_and_16bit);
+        $dumpvars(0, tb_and_17bit);
         
         
         for(i = 0; i< 5; i++)
@@ -828,17 +828,17 @@ $display("Sum_2 = %b", dut.Sum_2);
  
  
  
- module tb_OR_16bits;
+ module tb_OR_17bits;
  
-    logic [15:0] a,b,c;
+    logic [16:0] a,b,c;
     integer i;
     
-    OR_16bit dut(.a(a),.b(b),.c(c));
+    OR_17bit dut(.a(a),.b(b),.c(c));
      
     initial 
         begin
             $dumpfile("dump.vcd");
-            $dumpvars(0, tb_OR_16bits);
+            $dumpvars(0, tb_OR_17bits);
             
             for(i = 0; i< 5; i++)
                 begin
@@ -855,17 +855,17 @@ $display("Sum_2 = %b", dut.Sum_2);
  
  
  
-  module tb_Not_16bits;
+  module tb_Not_17bits;
  
-    logic [15:0] a,c;
+    logic [16:0] a,c;
     integer i;
     
-    NOT_16bit dut(.a(a),.c(c));
+    NOT_17bit dut(.a(a),.c(c));
      
     initial 
         begin
             $dumpfile("dump.vcd");
-            $dumpvars(0, tb_Not_16bits);
+            $dumpvars(0, tb_Not_17bits);
             
             for(i = 0; i< 5; i++)
                 begin
@@ -937,27 +937,27 @@ $display("Sum_2 = %b", dut.Sum_2);
  
  
  
-   module tb_Mux8_16bit;
+   module tb_Mux8_17bit;
  
-    logic [7:0] A,B,C,D,E,F,G,H;
+    logic [16:0] A,B,C,D,E,F,G,H;
     logic [2:0] S;
-    logic [7:0] O;
+    logic [16:0] O;
      
-     Mux8_16bit dut(.O(O), .A(A), .B(B), .C(C), .D(D), .E(E), .F(F), .G(G), .H(H), .S(S));
+     Mux8_17bit dut(.O(O), .A(A), .B(B), .C(C), .D(D), .E(E), .F(F), .G(G), .H(H), .S(S));
      
      integer i;
      
      initial
         begin
              $dumpfile("dump.vcd");
-             $dumpvars(0, tb_Mux8_16bit);
+             $dumpvars(0, tb_Mux8_17bit);
                 
              for(i = 0; i< 50; i++)
                     begin
                          A = $random;
                          B = $random;
                          C = $random;
-                         D = $random;
+                         D = {17{1'b1}};
                          E = $random;
                          F = $random;
                          G = $random;
@@ -968,4 +968,31 @@ $display("Sum_2 = %b", dut.Sum_2);
                     end
                 $finish;   
         end
+ endmodule
+ 
+ 
+ 
+ 
+ module tb_mux2_9bit;
+    logic [8:0] A,B,O;
+    logic S;
+    
+    mux2_9bit dut(.A(A), .B(B), .S(S), .O(O));
+    
+      integer i;
+     
+     initial
+        begin
+             $dumpfile("dump.vcd");
+             $dumpvars(0, tb_mux2_9bit);
+                
+             for(i = 0; i< 50; i++)
+                begin
+                    A = $random;
+                    B = $random;     
+                    S = $random;
+                    #10;
+                    end
+                $finish;   
+       end
  endmodule
