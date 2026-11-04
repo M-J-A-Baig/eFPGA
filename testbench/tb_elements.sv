@@ -937,6 +937,33 @@ $display("Sum_2 = %b", dut.Sum_2);
  
  
  
+ 
+   module tb_NOR2;
+ 
+     logic A, B, Z;
+     
+     NOR2 dut(.Z(Z), .A(A), .B(B));
+     
+     integer i;
+     
+     initial
+        begin
+             $dumpfile("dump.vcd");
+             $dumpvars(0, tb_NOR2);
+                
+             for(i = 0; i< 50; i++)
+                    begin
+                         A = $random;
+                         B = $random;
+                        #10;
+                    end
+                $finish;   
+        end
+ endmodule
+ 
+ 
+ 
+ 
    module tb_Mux8_17bit;
  
     logic [16:0] A,B,C,D,E,F,G,H;

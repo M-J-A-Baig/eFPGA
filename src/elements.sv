@@ -597,6 +597,19 @@ endmodule
 
 
 
+//nor 2 primitive
+module NOR2(Z, A, B );
+
+    input logic A,B;
+    output logic Z;
+    
+    always_comb
+        Z = ~(A | B );      
+endmodule
+
+
+
+
 //nor 4 primitive
 module NOR4(Z, A, B, C, D);
 
