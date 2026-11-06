@@ -57,11 +57,9 @@ module DFF #(
     always_ff@(posedge clk or negedge reset)
         begin
             q <= (reset == 0)  ? {WIDTH{1'b0}} :  
-                 (clk & WE)  ? d             :
+                 (clk & WE)    ? d             :
                                  q             ;   
-        
         end
-  
   endmodule
 
 
@@ -268,97 +266,6 @@ module LUT3(a,b,c,clk, Data_in,cfg_write_en, Out);
  
 //lut6
 // same selectors for a nibble
-//module LUT6(clk,d,e,f, a_lower_nibble, b_lower_nibble, c_lower_nibble, Data_in__lower_nibble, Data_in__upper_nibble, a_upper_nibble, b_upper_nibble, c_upper_nibble, cfg_write_en_0, cfg_write_en_1, cfg_write_en_2, cfg_write_en_3, cfg_write_en_4, cfg_write_en_5, cfg_write_en_6, cfg_write_en_7, Cin_lower_nibble, Cin_upper_nibble, Carry_select_Int_0,Carry_select_Int_1, LowerNibble_negVal_sel, UpperNibble_negVal_sel, O_6, O_5, Sum_0, Sum_1, Cout_lower_nibble, Sum_2, Sum_3, Cout_upper_nibble);
-
-//    input logic clk;
-//    input logic d,e,f;
-//    input logic a_lower_nibble, b_lower_nibble, c_lower_nibble,Data_in__lower_nibble;
-//    input logic a_upper_nibble, b_upper_nibble, c_upper_nibble, Data_in__upper_nibble;
-//    input logic cfg_write_en_0, cfg_write_en_1, cfg_write_en_2, cfg_write_en_3, cfg_write_en_4, cfg_write_en_5, cfg_write_en_6, cfg_write_en_7;
-//    input logic Cin_lower_nibble, Cin_upper_nibble;
-//    input logic LowerNibble_negVal_sel, UpperNibble_negVal_sel;
-//    input logic [1:0]Carry_select_Int_0,Carry_select_Int_1;
-//    output logic O_6, O_5;
-//    output logic Sum_0, Sum_1, Cout_lower_nibble, Sum_2, Sum_3, Cout_upper_nibble; 
-    
-//    //abc with a msb and c lsb
-    
-    
-//    //connecting wires
-//    logic Carry_LowerNibble_out, Carry_UpperNibble_out;
-//    logic Wire_LowerNibble_AddSub_Sel_val, Wire_UpperNibble_AddSub_Sel_val;
-//    logic Out_lut3_0 , Out_lut3_1, Out_lut3_2, Out_lut3_3, Out_lut3_4, Out_lut3_5, Out_lut3_6, Out_lut3_7;
-//    logic Not_Out_lut3_0, Not_Out_lut3_4;
-//    logic CarryBetweenAdder_Lut3_01_and_Lut3_23,CarryBetweenAdder_Lut3_45_and_Lut3_67;
-//    logic Wire_Cout_LowerNibble,Wire_Cout_UpperNibble;
-//    logic Out_mux4_01, Out_mux4_23, Out_mux4_45, Out_mux4_67;
-//    logic Out_mux5_03, Out_mux5_47;
-    
-    
-//    //0. clock buffers
-    
-    
-//    //stage 0
-//    //1. input carry lower nibble
-//        mux_4 lower_carry_selector(.I0(1'b0),.I1(Cin_lower_nibble),.I2(Cin_lower_nibble),.I3(1'b1),.S(Carry_select_Int_0),.O(Carry_LowerNibble_out));
-        
-//    //2. lower nibble lut3s
-//        LUT3  lut3_0(.a(a_lower_nibble),.b(b_lower_nibble),.c(c_lower_nibble),.clk(clk), .Data_in(Data_in__lower_nibble),.cfg_write_en(cfg_write_en_0), .Out(Out_lut3_0));
-//        LUT3  lut3_1(.a(a_lower_nibble),.b(b_lower_nibble),.c(c_lower_nibble),.clk(clk), .Data_in(Data_in__lower_nibble),.cfg_write_en(cfg_write_en_1), .Out(Out_lut3_1)); 
-//        LUT3  lut3_2(.a(a_lower_nibble),.b(b_lower_nibble),.c(c_lower_nibble),.clk(clk), .Data_in(Data_in__lower_nibble),.cfg_write_en(cfg_write_en_2), .Out(Out_lut3_2)); 
-//        LUT3  lut3_3(.a(a_lower_nibble),.b(b_lower_nibble),.c(c_lower_nibble),.clk(clk), .Data_in(Data_in__lower_nibble),.cfg_write_en(cfg_write_en_3), .Out(Out_lut3_3)); 
-              
-        
-//    //3. Lower nibble adders
-//    // negative term in lower lut3, because addition with 2s compliment because limiting not gate 
-      
-//         not two_comp_lowerNible(Not_Out_lut3_0,Out_lut3_0);
-//         mux_2 diff_bw_add_sub_LowerNibble(.I0(Out_lut3_0),.I1(Not_Out_lut3_0), .S(LowerNibble_negVal_sel),.O(Wire_LowerNibble_AddSub_Sel_val));
-//         adder_1_bit lut3_01(.a(Wire_LowerNibble_AddSub_Sel_val),.b(Out_lut3_1),.cin(Carry_LowerNibble_out),.out(Sum_0),.cout(CarryBetweenAdder_Lut3_01_and_Lut3_23));
-//         adder_1_bit lut3_23(.a(Out_lut3_2),.b(Out_lut3_3),.cin(CarryBetweenAdder_Lut3_01_and_Lut3_23),.out(Sum_1),.cout(Wire_Cout_LowerNibble));
-        
-//    //4. input carry upper nibble
-//        mux_4 Upper_carry_selector(.I0(1'b0),.I1(Cin_upper_nibble),.I2(Wire_Cout_LowerNibble),.I3(1'b1),.S(Carry_select_Int_1),.O(Carry_UpperNibble_out));
-        
-//    //5. upper nibble lut3s
-//        LUT3  lut3_4(.a(a_upper_nibble),.b(b_upper_nibble),.c(c_upper_nibble),.clk(clk), .Data_in(Data_in__upper_nibble),.cfg_write_en(cfg_write_en_4), .Out(Out_lut3_4));
-//        LUT3  lut3_5(.a(a_upper_nibble),.b(b_upper_nibble),.c(c_upper_nibble),.clk(clk), .Data_in(Data_in__upper_nibble),.cfg_write_en(cfg_write_en_5), .Out(Out_lut3_5)); 
-//        LUT3  lut3_6(.a(a_upper_nibble),.b(b_upper_nibble),.c(c_upper_nibble),.clk(clk), .Data_in(Data_in__upper_nibble),.cfg_write_en(cfg_write_en_6), .Out(Out_lut3_6)); 
-//        LUT3  lut3_7(.a(a_upper_nibble),.b(b_upper_nibble),.c(c_upper_nibble),.clk(clk), .Data_in(Data_in__upper_nibble),.cfg_write_en(cfg_write_en_7), .Out(Out_lut3_7)); 
-              
-//    //6. Upper nibble adders
-//    // negative term in lower lut3, because addition with 2s compliment because limiting not gate   
-//        not two_comp_upperNible(Not_Out_lut3_4,Out_lut3_4);
-//        mux_2 diff_bw_add_sub_UpperNibble(.I0(Out_lut3_4), .I1(Not_Out_lut3_4), .S(UpperNibble_negVal_sel),.O(Wire_UpperNibble_AddSub_Sel_val));
-//        adder_1_bit lut3_45(.a(Wire_UpperNibble_AddSub_Sel_val),.b(Out_lut3_5),.cin(Carry_upperNibble_out),.out(Sum_3),.cout(CarryBetweenAdder_Lut3_45_and_Lut3_67));
-//        adder_1_bit lut3_67(.a(Out_lut3_6),.b(Out_lut3_7),.cin(CarryBetweenAdder_Lut3_45_and_Lut3_67),.out(Sum_4),.cout(Wire_Cout_UpperNibble));
-         
-         
-         
-         
-//    //stage 2
-//    //7. d selectors/muxes
-//        mux_2 dSelector_lut4_01(.I0(Out_lut3_0),.I1(Out_lut3_1),.S(d),.O(Out_mux4_01));
-//        mux_2 dSelector_lut4_23(.I0(Out_lut3_2),.I1(Out_lut3_3),.S(d),.O(Out_mux4_23));
-//        mux_2 dSelector_lut4_45(.I0(Out_lut3_4),.I1(Out_lut3_5),.S(d),.O(Out_mux4_45));
-//        mux_2 dSelector_lut4_67(.I0(Out_lut3_6),.I1(Out_lut3_6),.S(d),.O(Out_mux4_67));
-        
-//    //8. e selector/muxes 
-//         mux_2 dSelector_lut5_03(.I0(Out_mux4_01),.I1(Out_mux4_23),.S(e),.O(Out_mux5_03));
-//         mux_2 dSelector_lut5_47(.I0(Out_mux4_45),.I1(Out_mux4_67),.S(e),.O(Out_mux5_47));
-         
-//    //9. f selector/muxes
-//         mux_2 dSelector_lut6(.I0(Out_mux5_03),.I1(Out_mux5_47),.S(f),.O(O_6)); 
-         
-         
-         
-//    // assign ports
-//        assign   Cout_lower_nibble = Wire_Cout_LowerNibble;
-//        assign   Cout_upper_nibble = Wire_Cout_UpperNibble;
-//        assign   O_5 = Out_mux5_03;
-        
-//endmodule  
-
 module LUT6(clk,a,b,c,d,e,f, Data_in, cfg_write_en_0, cfg_write_en_1, cfg_write_en_2, cfg_write_en_3, cfg_write_en_4, cfg_write_en_5, cfg_write_en_6, cfg_write_en_7, Cin_lower_nibble, Cin_upper_nibble, Carry_select_Int_0,Carry_select_Int_1, LowerNibble_negVal_sel, UpperNibble_negVal_sel, O_6, O_5, Sum_0, Sum_1, Cout_lower_nibble, Sum_2, Sum_3, Cout_upper_nibble);
 
     input logic clk;
@@ -453,12 +360,12 @@ endmodule
 
 
 
-//17bit adder
-module adder_17bit(a, b, Cin, Out, Cout);
+//16bit adder
+module adder_16bit(a, b, Cin, Out, Cout);
     
-    input logic [16:0] a,b;
+    input logic [15:0] a,b;
     input logic Cin;
-    output logic [16:0] Out;
+    output logic [15:0] Out;
     output logic Cout;
     
     logic Int_Cout_0, Int_Cout_1, Int_Cout_2, Int_Cout_3, Int_Cout_4, Int_Cout_5, Int_Cout_6, Int_Cout_7;
@@ -480,8 +387,8 @@ module adder_17bit(a, b, Cin, Out, Cout);
     adder_1_bit adder12(.a(a[12]), .b(b[12]), .cin(Int_Cout_11), .out(Out[12]), .cout(Int_Cout_12));
     adder_1_bit adder13(.a(a[13]), .b(b[13]), .cin(Int_Cout_12), .out(Out[13]), .cout(Int_Cout_13));
     adder_1_bit adder14(.a(a[14]), .b(b[14]), .cin(Int_Cout_13), .out(Out[14]), .cout(Int_Cout_14));
-    adder_1_bit adder15(.a(a[15]), .b(b[15]), .cin(Int_Cout_14), .out(Out[15]), .cout(Int_Cout_15));
-    adder_1_bit adder16(.a(a[16]), .b(b[16]), .cin(Int_Cout_15), .out(Out[16]), .cout(Cout));
+  //  adder_1_bit adder15(.a(a[15]), .b(b[15]), .cin(Int_Cout_14), .out(Out[15]), .cout(Int_Cout_15));
+    adder_1_bit adder15(.a(a[15]), .b(b[15]), .cin(Int_Cout_14), .out(Out[15]), .cout(Cout));
     
      
 endmodule
@@ -489,12 +396,12 @@ endmodule
 
 
 
-//9bit Add
-module adder_9bit(a, b, Cin, Out, Cout);
+//8bit Add
+module adder_8bit(a, b, Cin, Out, Cout);
     
-    input logic [8:0] a,b;
+    input logic [7:0] a,b;
     input logic Cin;
-    output logic [8:0] Out;
+    output logic [7:0] Out;
     output logic Cout;
     
     logic Int_Cout_0, Int_Cout_1, Int_Cout_2, Int_Cout_3, Int_Cout_4, Int_Cout_5, Int_Cout_6, Int_Cout_7, Int_Cout_8;
@@ -507,8 +414,8 @@ module adder_9bit(a, b, Cin, Out, Cout);
     adder_1_bit adder4(.a(a[4]), .b(b[4]), .cin(Int_Cout_3), .out(Out[4]), .cout(Int_Cout_4));
     adder_1_bit adder5(.a(a[5]), .b(b[5]), .cin(Int_Cout_4), .out(Out[5]), .cout(Int_Cout_5));
     adder_1_bit adder6(.a(a[6]), .b(b[6]), .cin(Int_Cout_5), .out(Out[6]), .cout(Int_Cout_6));
-    adder_1_bit adder7(.a(a[7]), .b(b[7]), .cin(Int_Cout_6), .out(Out[7]), .cout(Int_Cout_7));
-    adder_1_bit adder8(.a(a[8]), .b(b[8]), .cin(Int_Cout_7), .out(Out[8]), .cout(Cout));
+    adder_1_bit adder7(.a(a[7]), .b(b[7]), .cin(Int_Cout_6), .out(Out[7]), .cout(Cout));
+   // adder_1_bit adder8(.a(a[8]), .b(b[8]), .cin(Int_Cout_7), .out(Out[8]), .cout(Cout));
     
      
 endmodule
@@ -516,11 +423,11 @@ endmodule
 
 
 
-//17 bit bitwise And
-module AND_17bit(a,b,c);
+//16 bit bitwise And
+module AND_16bit(a,b,c);
     
-    input logic [16:0] a,b;
-    output logic [16:0] c;
+    input logic [15:0] a,b;
+    output logic [15:0] c;
     
     and and0(c[0], a[0], b[0]);
     and and1(c[1], a[1], b[1]);
@@ -538,23 +445,23 @@ module AND_17bit(a,b,c);
     and and13(c[13], a[13], b[13]);
     and and14(c[14], a[14], b[14]);
     and and15(c[15], a[15], b[15]);
-    and and16(c[16], a[16], b[16]);
+//    and and16(c[16], a[16], b[16]);
         
 endmodule
 
 
 
 
-//17 bit or
-module OR_17bit(c,a,b);
+//16 bit or
+module OR_16bit(c,a,b);
 
-    input logic [16:0] a,b;
-    output logic [16:0]c;
+    input logic [15:0] a,b;
+    output logic [15:0]c;
     
     genvar i;
     
     generate
-        for (i =0; i<=16; i++)
+        for (i =0; i<=15; i++)
             begin : OrGates
                 or OrGate(c[i],a[i],b[i]);
             end 
@@ -565,21 +472,40 @@ endmodule
 
 
 
-//17 bit not
-module NOT_17bit(c,a);
+//16 bit not
+module NOT_16bit(c,a);
 
-    input logic [16:0] a;
-    output logic [16:0] c;
+    input logic [15:0] a;
+    output logic [15:0] c;
     
     genvar i;
     
     generate 
-        for(i=0; i<=16; i++)
+        for(i=0; i<=15; i++)
             begin : NotGates
                 not NotGate(c[i], a[i]);    
             end
     endgenerate;
     
+endmodule
+
+
+
+
+//8 bit not
+module NOT_8bit(c,a);
+
+    input logic [7:0] a;
+    output logic [7:0] c;
+    
+    genvar i;
+    
+    generate 
+        for(i=0; i<=7; i++)
+            begin : NotGates
+                not NotGate(c[i], a[i]);    
+            end
+    endgenerate;
 endmodule
 
 
@@ -624,21 +550,21 @@ endmodule
 
 
 
-//17 bit 8 input mux
-module Mux8_17bit(O, A, B, C, D, E, F, G, H, S);
+//16 bit 8 input mux
+module Mux8_16bit(O, A, B, C, D, E, F, G, H, S);
     
-    input logic [16:0] A,B,C,D,E,F,G,H;
+    input logic [15:0] A,B,C,D,E,F,G,H;
     input logic [2:0] S;
-    output logic [16:0] O;
+    output logic [15:0] O;
     
     //wire
-    logic [16:0] upper_mux_out, lower_mux_out;
+    logic [15:0] upper_mux_out, lower_mux_out;
     
 
     genvar i;
     
     generate
-        for(i = 0; i<=16; i++)
+        for(i = 0; i<=15; i++)
             begin: dspMux
                 mux_4 upper_mux(.I0(A[i]), .I1(B[i]), .I2(C[i]), .I3(D[i]), .S(S[1:0]), .O(lower_mux_out[i]));
                 mux_4 lower_mux(.I0(E[i]), .I1(F[i]), .I2(G[i]), .I3(H[i]), .S(S[1:0]), .O(upper_mux_out[i]));
@@ -646,27 +572,90 @@ module Mux8_17bit(O, A, B, C, D, E, F, G, H, S);
                 mux_2 outer_mux(.I0(lower_mux_out[i]), .I1(upper_mux_out[i]), .S(S[2]) , .O(O[i]));            
             end   
     endgenerate
-
 endmodule
 
 
 
 
-//9 bit 2 input mux
-module mux2_9bit(A,B,S,O);
+//8 bit 2 input mux
+module mux2_8bit(A,B,S,O);
   
-  input logic [8:0] A,B;
+  input logic [7:0] A,B;
   input logic S;
-  output logic [8:0] O;
+  output logic [7:0] O;
    
     genvar i;
     
     generate
-        for(i = 0; i<=8; i++)
-            begin: bit9_mux
-                 mux_2 mux2_9bit(.I0(A[i]), .I1(B[i]), .S(S), .O(O[i]));
+        for(i = 0; i<=7; i++)
+            begin: bit8_mux
+                 mux_2 mux2_8bit(.I0(A[i]), .I1(B[i]), .S(S), .O(O[i]));
                  
             end
     endgenerate
 
  endmodule
+ 
+ 
+ 
+ 
+ 
+//16 bit 2 input mux
+module mux2_16bit(A,B,S,O);
+  
+  input logic [15:0] A,B;
+  input logic S;
+  output logic [15:0] O;
+   
+    genvar i;
+    
+    generate
+        for(i = 0; i<=15; i++)
+            begin: bit16_mux
+                 mux_2 mux2_8bit(.I0(A[i]), .I1(B[i]), .S(S), .O(O[i]));
+            end
+    endgenerate
+
+ endmodule
+ 
+ 
+ 
+ 
+ //4:1 mux 
+module mux4_16bit (I0,I1,I2,I3,S,O);
+  input logic [15:0] I0,I1,I3,I2;
+  input wire [1:0]S;
+  output logic [15:0]O;
+  
+  genvar i;
+  
+   generate
+        for(i = 0; i<=15; i++)
+            begin: bit16_mux4
+                 mux_4 mux4_16bit(.I0(I0[i]), .I1(I1[i]), .I2(I2[i]), .I3(I3[i]), .S(S), .O(O[i]));
+            end
+    endgenerate
+
+ endmodule
+
+
+ 
+ 
+ 
+ 
+ // 8 bit multiplier
+ module multiplier_8bit (
+    input  logic [7:0] A,
+    input  logic [7:0] B,
+ //   input  logic SignedMode,
+    output logic [15:0] Out
+);
+
+    //always_comb begin
+    //    if (SignedMode)
+    //        Out = $signed(A) * $signed(B);
+    //    else
+         assign   Out = A * B;
+    //end
+
+endmodule

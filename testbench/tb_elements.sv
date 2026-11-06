@@ -490,7 +490,6 @@ always #5 clk = ~clk;
         cfg_write_en_7 = 0;
         #10
         
-        
         //config time
         cfg_write_en_0 = 1;  
         cfg_write_en_1 = 1;
@@ -545,8 +544,6 @@ always #5 clk = ~clk;
         cfg_write_en_6 = 0;
         cfg_write_en_7 = 0;
         
-
-        
         //differentitaing time
         #50
         
@@ -573,8 +570,6 @@ always #5 clk = ~clk;
         d = 0; e = 1; f = 0;
         #40
         
-        
-        
         //upper values
         c=0; b=0; a=1;
         d = 0; e = 0; f = 1;
@@ -585,8 +580,6 @@ always #5 clk = ~clk;
         c=0; b=0; a=0;
         d = 1; e = 0; f = 1;
         #50
-        
-        
         
          //config time
         c = 0; b = 0; a = 0;  
@@ -610,17 +603,13 @@ always #5 clk = ~clk;
         #10
         cfg_write_en_3 = 0;  
         
-        
-        
         //differentitaing time
         #50
-        
                 
         //normal ops add and cin 0
         LowerNibble_negVal_sel = 0;
         Carry_select_Int_0 = 0;
         c=0; b=0; a=0;  
-        
         
         //differentitaing time
         #50
@@ -630,7 +619,6 @@ always #5 clk = ~clk;
         LowerNibble_negVal_sel = 0;
         Carry_select_Int_0 = 3;
         c=0; b=0; a=0;  
-        
         
         //differentitaing time
         #50
@@ -645,46 +633,36 @@ always #5 clk = ~clk;
         //differentitaing time
         #50
         
-        
          // 2 adders with cin 1
-         LowerNibble_negVal_sel = 0;
+        LowerNibble_negVal_sel = 0;
         Carry_select_Int_0 = 2;
         Cin_lower_nibble = 1;
         c=0; b=0; a=0;  
-        
-        
-           #50
+        #50
         
          // 2 adders with cin 1
-         LowerNibble_negVal_sel = 0;
+        LowerNibble_negVal_sel = 0;
         Carry_select_Int_0 = 2;
         Cin_lower_nibble = 1;
         c=0; b=0; a=0;  
       
-      UpperNibble_negVal_sel = 0;
+        UpperNibble_negVal_sel = 0;
         Carry_select_Int_1 = 2;
         Cin_upper_nibble = 1;
         #10
         $display("Carry_select_Int_1 = %b", Carry_select_Int_1);
-$display("Wire_Cout_LowerNibble = %b", dut.Wire_Cout_LowerNibble);
-$display("Cin_upper_nibble = %b", dut.Cin_upper_nibble);
-$display("Carry_UpperNibble_out = %b", dut.Carry_UpperNibble_out);
-
-$display("Wire_UpperNibble_AddSub_Sel_val = %b", dut.Wire_UpperNibble_AddSub_Sel_val);
-$display("Out_lut3_5 = %b", dut.Out_lut3_5);
-$display("Carry_UpperNibble_out = %b", dut.Carry_UpperNibble_out);
-
-$display("Sum_2 = %b", dut.Sum_2);
-
-
+        $display("Wire_Cout_LowerNibble = %b", dut.Wire_Cout_LowerNibble);
+        $display("Cin_upper_nibble = %b", dut.Cin_upper_nibble);
+        $display("Carry_UpperNibble_out = %b", dut.Carry_UpperNibble_out);
         
+        $display("Wire_UpperNibble_AddSub_Sel_val = %b", dut.Wire_UpperNibble_AddSub_Sel_val);
+        $display("Out_lut3_5 = %b", dut.Out_lut3_5);
+        $display("Carry_UpperNibble_out = %b", dut.Carry_UpperNibble_out);
         
+        $display("Sum_2 = %b", dut.Sum_2);
         
         //differentitaing time
         #50
-        
-        
-        
         
         // sub
         Carry_select_Int_0 =2;
@@ -692,36 +670,28 @@ $display("Sum_2 = %b", dut.Sum_2);
         Cin_lower_nibble = 1;
         c=0; b=0; a=0;  
         
-        
-        
         //differentitaing time
         #50
         
-        
-        
-        
        $finish; 
       end   
-     
  endmodule
  
  
  
  
- module tb_adder_9bit;
+ module tb_adder_8bit;
  
- logic [8:0] a, b, Out;
+ logic [7:0] a, b, Out;
  logic Cin,Cout;
  
- adder_9bit dut (.a(a), .b(b), .Cin(Cin), .Out(Out), .Cout(Cout));
+ adder_8bit dut (.a(a), .b(b), .Cin(Cin), .Out(Out), .Cout(Cout));
  
  
  initial
     begin
      $dumpfile("dump.vcd");
-     $dumpvars(0, tb_adder_9bit);
-     
-     
+     $dumpvars(0, tb_adder_8bit);
      
      a = 25; b = 15; Cin = 1;
      #10
@@ -740,34 +710,26 @@ $display("Sum_2 = %b", dut.Sum_2);
      a = 30; b = ~34; Cin = 1; //-4
      #10
      
-    
     $monitor("a= %d, b= %d, Cin=%d, Out= %d, Cout=%d", a,b,Cin,Out,Cout);
-    
     $finish;
-    
     end
-    
- 
- 
  endmodule
  
  
  
  
- module tb_adder_17bit;
+ module tb_adder_16bit;
  
- logic [16:0] a, b, Out;
+ logic [15:0] a, b, Out;
  logic Cin,Cout;
  
- adder_17bit dut (.a(a), .b(b), .Cin(Cin), .Out(Out), .Cout(Cout));
+ adder_16bit dut (.a(a), .b(b), .Cin(Cin), .Out(Out), .Cout(Cout));
  
  
  initial
     begin
      $dumpfile("dump.vcd");
-     $dumpvars(0, tb_adder_17bit);
-     
-     
+     $dumpvars(0, tb_adder_16bit);
      
      a = 125; b = 105; Cin = 1;
      #10
@@ -786,31 +748,26 @@ $display("Sum_2 = %b", dut.Sum_2);
      a = 300; b = ~34; Cin = 1; //256
      #10
      
-    
     $monitor("a= %d, b= %d, Cin=%d, Out= %d, Cout=%d", a,b,Cin,Out,Cout);
     
     $finish;
-    
     end
-    
- 
- 
  endmodule
  
  
  
  
- module tb_and_17bit;
+ module tb_and_16bit;
  
- logic [16:0] a,b,c;
+ logic [15:0] a,b,c;
  int i;
  
- AND_17bit dut(.a(a),.b(b),.c(c));
+ AND_16bit dut(.a(a),.b(b),.c(c));
  
  initial
     begin
         $dumpfile("dump.vcd");
-        $dumpvars(0, tb_and_17bit);
+        $dumpvars(0, tb_and_16bit);
         
         
         for(i = 0; i< 5; i++)
@@ -828,17 +785,17 @@ $display("Sum_2 = %b", dut.Sum_2);
  
  
  
- module tb_OR_17bits;
+ module tb_OR_16bits;
  
-    logic [16:0] a,b,c;
+    logic [15:0] a,b,c;
     integer i;
     
-    OR_17bit dut(.a(a),.b(b),.c(c));
+    OR_16bit dut(.a(a),.b(b),.c(c));
      
     initial 
         begin
             $dumpfile("dump.vcd");
-            $dumpvars(0, tb_OR_17bits);
+            $dumpvars(0, tb_OR_16bits);
             
             for(i = 0; i< 5; i++)
                 begin
@@ -855,17 +812,17 @@ $display("Sum_2 = %b", dut.Sum_2);
  
  
  
-  module tb_Not_17bits;
+  module tb_Not_16bits;
  
     logic [16:0] a,c;
     integer i;
     
-    NOT_17bit dut(.a(a),.c(c));
+    NOT_16bit dut(.a(a),.c(c));
      
     initial 
         begin
             $dumpfile("dump.vcd");
-            $dumpvars(0, tb_Not_17bits);
+            $dumpvars(0, tb_Not_16bits);
             
             for(i = 0; i< 5; i++)
                 begin
@@ -876,6 +833,30 @@ $display("Sum_2 = %b", dut.Sum_2);
             $finish;   
         end
  
+ endmodule
+ 
+ 
+ 
+ 
+   module tb_Not_8bits;
+ 
+    logic [7:0] a,c;
+    integer i;
+    
+    NOT_8bit dut(.a(a),.c(c));
+     
+    initial 
+        begin
+            $dumpfile("dump.vcd");
+            $dumpvars(0, tb_Not_8bits);
+            
+            for(i = 0; i< 5; i++)
+                begin
+                    a = $random;
+                    #10;
+                end
+            $finish;   
+        end
  endmodule
  
  
@@ -964,27 +945,27 @@ $display("Sum_2 = %b", dut.Sum_2);
  
  
  
-   module tb_Mux8_17bit;
+   module tb_Mux8_16bit;
  
-    logic [16:0] A,B,C,D,E,F,G,H;
+    logic [15:0] A,B,C,D,E,F,G,H;
     logic [2:0] S;
-    logic [16:0] O;
+    logic [15:0] O;
      
-     Mux8_17bit dut(.O(O), .A(A), .B(B), .C(C), .D(D), .E(E), .F(F), .G(G), .H(H), .S(S));
+     Mux8_16bit dut(.O(O), .A(A), .B(B), .C(C), .D(D), .E(E), .F(F), .G(G), .H(H), .S(S));
      
      integer i;
      
      initial
         begin
              $dumpfile("dump.vcd");
-             $dumpvars(0, tb_Mux8_17bit);
+             $dumpvars(0, tb_Mux8_16bit);
                 
              for(i = 0; i< 50; i++)
                     begin
                          A = $random;
                          B = $random;
                          C = $random;
-                         D = {17{1'b1}};
+                         D = {16{1'b1}};
                          E = $random;
                          F = $random;
                          G = $random;
@@ -1000,18 +981,18 @@ $display("Sum_2 = %b", dut.Sum_2);
  
  
  
- module tb_mux2_9bit;
-    logic [8:0] A,B,O;
+ module tb_mux2_8bit;
+    logic [7:0] A,B,O;
     logic S;
     
-    mux2_9bit dut(.A(A), .B(B), .S(S), .O(O));
+    mux2_8bit dut(.A(A), .B(B), .S(S), .O(O));
     
       integer i;
      
      initial
         begin
              $dumpfile("dump.vcd");
-             $dumpvars(0, tb_mux2_9bit);
+             $dumpvars(0, tb_mux2_8bit);
                 
              for(i = 0; i< 50; i++)
                 begin
@@ -1023,3 +1004,101 @@ $display("Sum_2 = %b", dut.Sum_2);
                 $finish;   
        end
  endmodule
+ 
+ 
+ 
+ 
+  module tb_mux2_16bit;
+    logic [15:0] A,B,O;
+    logic S;
+    
+    mux2_16bit dut(.A(A), .B(B), .S(S), .O(O));
+    
+    integer i;
+     
+     initial
+        begin
+             $dumpfile("dump.vcd");
+             $dumpvars(0, tb_mux2_16bit);
+                
+             for(i = 0; i< 50; i++)
+                begin
+                    A = $random;
+                    B = $random;     
+                    S = $random;
+                    #10;
+                    end
+                $finish;   
+       end
+ endmodule
+ 
+ 
+ 
+   module tb_mux4_16bit;
+    logic [15:0] I0,I1,I2,I3,O;
+    logic [1:0]S;
+    
+    mux4_16bit dut(.I0(I0), .I1(I1), .I2(I2), .I3(I3), .S(S), .O(O));
+    
+    integer i;
+     
+     initial
+        begin
+             $dumpfile("dump.vcd");
+             $dumpvars(0, tb_mux4_16bit);
+                
+             for(i = 0; i< 10; i++)
+                begin
+                    I0 = $random;
+                    I1 = $random;     
+                    I2 = $random;
+                    I3 = $random;
+                    S = $random;
+                    #10;
+                    end
+                $finish;   
+       end
+ endmodule
+ 
+ 
+ 
+ 
+ module tb_multiplier_8bit;
+    logic [7:0] A,B;
+    logic [15:0] out;
+    
+    multiplier_8bit dut(.A(A), .B(B), .Out(out));
+    
+    integer i;
+     
+     initial
+        begin
+             $dumpfile("dump.vcd");
+             $dumpvars(0, tb_multiplier_8bit);
+                
+             for(i = 0; i< 5; i++)
+                begin
+                   // Positive × Positive
+                A = $urandom_range(0, 127);
+                B = $urandom_range(0, 127);
+                #10;
+        
+                // Negative × Negative
+                A = -$urandom_range(1, 128);
+                B = -$urandom_range(1, 128);
+                #10;
+        
+                // Positive × Negative
+                A = $urandom_range(0, 127);
+                B = -$urandom_range(1, 128);
+                #10;
+        
+                // Negative × Positive
+                A = -$urandom_range(1, 128);
+                B = $urandom_range(0, 127);
+                #10;
+                end
+                $finish;   
+       end
+    
+ endmodule 

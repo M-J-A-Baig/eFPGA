@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 module tb_ZeroDetector;
-    logic [16:0] A;
+    logic [15:0] A;
     logic  C;
     
     ZeroDetector dut(.C(C), .A(A));
@@ -54,7 +54,7 @@ module tb_ALU;
     logic [2:0] ALU_mode;
     logic cfg_flag,ALU_Carry_IN, CarryOut, ZeroFlag;
     logic [1:0] cfg_ALU_CarrySel;
-    logic [16:0] A,B, Out;
+    logic [15:0] A,B, Out;
     
     ALU dut(.ALU_mode(ALU_mode), .cfg_flag(cfg_flag), .A(A), .B(B), .cfg_ALU_CarrySel(cfg_ALU_CarrySel), .ALU_Carry_IN(ALU_Carry_IN),  .Out(Out), .CarryOut(CarryOut), .ZeroFlag(ZeroFlag));
 
@@ -228,4 +228,13 @@ module tb_ALU;
                 $finish;     
         end
     
+endmodule
+
+
+
+module tb_DSP;
+
+
+
+
 endmodule
