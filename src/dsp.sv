@@ -61,6 +61,7 @@ module ALU(ALU_mode, cfg_flag, A, B, cfg_ALU_CarrySel, ALU_Carry_IN, Out, CarryO
     logic ALU_Carry_select;
     logic [2:0] Wire_BSelected_ALUmode_Latch; //Wire_ALU_Out1_Latched, Wire_ALU_Out2_Latched, Wire_B_selected_Latch;
     logic [1:0] Wire_ALU_CarrySel_Latch;
+    logic wire_aLessThanb, wire_NotZero, wire_aGreaterThanb;
     
     
     // Selection/Mux latches
@@ -86,10 +87,16 @@ module ALU(ALU_mode, cfg_flag, A, B, cfg_ALU_CarrySel, ALU_Carry_IN, Out, CarryO
         
     //zero flag generation
     ZeroDetector detector(.C(ZeroFlag),.A(Wire_Out_Adder));
+    
+    //for a<b
+    not (wire_aLessThanb, CarryOut);
+    not (wire_NotZero, ZeroFlag );
+    and (wire_aGreaterThanb, CarryOut, wire_NotZero);
+    
 
     // out mux
     //      ALU Mode =              0.and               1.or            2. not              3.adder             4. subtractor           5.lessthan              6.greater than              7.equals to                                                                                           
-    Mux8_16bit out_mux(.O(Out), .A(Wire_Out_AND), .B(Wire_Out_OR), .C(Wire_Out_Not), .D(Wire_Out_Adder), .E(Wire_Out_Adder), .F({16{Wire_Out_Adder[7]}}), .G({16{Wire_Out_Adder[7]}}), .H(Wire_Out_Adder), .S(Wire_BSelected_ALUmode_Latch));
+    Mux8_16bit out_mux(.O(Out), .A(Wire_Out_AND), .B(Wire_Out_OR), .C(Wire_Out_Not), .D(Wire_Out_Adder), .E(Wire_Out_Adder), .F({16{wire_aLessThanb}}), .G({16{wire_aGreaterThanb}}), .H(Wire_Out_Adder), .S(Wire_BSelected_ALUmode_Latch));
     
 endmodule
 

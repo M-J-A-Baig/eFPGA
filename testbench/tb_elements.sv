@@ -814,7 +814,7 @@ always #5 clk = ~clk;
  
   module tb_Not_16bits;
  
-    logic [16:0] a,c;
+    logic [15:0] a,c;
     integer i;
     
     NOT_16bit dut(.a(a),.c(c));
