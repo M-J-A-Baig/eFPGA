@@ -61,6 +61,26 @@ module DFF #(
                                  q             ;   
         end
   endmodule
+  
+  
+  
+  
+  //DFF_without WE
+module DFF_noWE #(
+	parameter WIDTH = 1
+)
+  (clk,reset, d,q);
+  input wire clk,reset;
+  input wire [WIDTH-1:0] d;
+  output reg [WIDTH-1:0] q;
+
+    always_ff@(posedge clk or negedge reset)
+        begin
+            q <= (reset == 0)  ? {WIDTH{1'b0}} :  
+                 (clk )    ? d             :
+                             q             ;   
+        end
+  endmodule
 
 
 
@@ -577,6 +597,26 @@ endmodule
 
 
 
+//3 bit 2 input mux
+module mux2_3bit(A,B,S,O);
+  
+  input logic [2:0] A,B;
+  input logic S;
+  output logic [2:0] O;
+   
+    genvar i;
+    
+    generate
+        for(i = 0; i<=2; i++)
+            begin: bit3_mux
+                 mux_2 mux2_8bit(.I0(A[i]), .I1(B[i]), .S(S), .O(O[i]));
+            end
+    endgenerate
+ endmodule
+
+
+
+
 //8 bit 2 input mux
 module mux2_8bit(A,B,S,O);
   
@@ -596,6 +636,47 @@ module mux2_8bit(A,B,S,O);
 
  endmodule
  
+ 
+ //8 bit 2 input mux
+module mux2_Parameterizedbit#(parameter WIDTH = 1)
+(
+  input logic [WIDTH-1:0] A,B,
+  input logic S,
+  output logic [WIDTH-1:0] O
+);
+  
+    genvar i;
+    
+    generate
+        for(i = 0; i<=WIDTH-1; i++)
+            begin: bitparameteized_mux
+                 mux_2 mux2_8bit(.I0(A[i]), .I1(B[i]), .S(S), .O(O[i]));
+            end
+    endgenerate
+
+ endmodule
+
+
+
+ 
+//8 bit 2 input mux
+module mux2_9bit(A,B,S,O);
+  
+  input logic [8:0] A,B;
+  input logic S;
+  output logic [8:0] O;
+   
+    genvar i;
+    
+    generate
+        for(i = 0; i<=8; i++)
+            begin: bit9_mux
+                 mux_2 mux2_8bit(.I0(A[i]), .I1(B[i]), .S(S), .O(O[i]));
+                 
+            end
+    endgenerate
+
+ endmodule 
  
  
  

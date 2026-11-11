@@ -126,6 +126,70 @@ endmodule
 
 
 
+module tb_DFF_noWE;
+  reg clk;
+  reg reset;
+  reg [`Width-1:0] d;
+  wire [`Width -1:0] q;
+
+  DFF_noWE #(`Width) dut(
+    .clk(clk),
+    .reset(reset),
+    .d(d),
+    .q(q)
+  );
+
+  // 1. Clock Generation: 10ns period (5ns HIGH, 5ns LOW)
+  always #5 clk = ~clk;
+  integer i;
+
+  // 2. Stimulus Process
+  initial begin
+    $dumpfile("dump.vcd");
+    $dumpvars(0, tb_DFF_noWE);
+
+    // Monitor signal updates in stdout
+    $monitor("Time=%0t | clk=%b reset=%b d=%b -> q=%b", 
+             $time, clk, reset, d, q);
+
+    clk = 0;
+    reset  = 1; //active low
+    d   = 0;
+    #5
+    
+    #10;
+    reset = 0; d = 4'b0001;       // Force reset active with d=1 to verify SR priority
+    #10;
+    reset = 1;             // Release reset
+
+    #10;
+    //d = 4'b0010;      // Expect q = 1 on posedge clk
+    for (i = 0; i < 5; i = i + 1) begin
+      @(posedge clk);        // Wait for clock edge
+      d = d + 1'b1;   // Apply vector
+    end
+    #10;
+    d = 0;              // Expect q = 0 on posedge clk
+
+    #10;
+    d = 4'b0001;      // Changing d while WE=0; expect q to hold 0
+    #10;
+
+    d =  4'b0001;      // Enable write
+    #10;                // q becomes 1
+    reset = 0;             // Assert reset while WE is still active
+    #10;                // SR should override WE, q becomes 0
+
+    // End 
+    #10;
+    $finish;
+  end
+
+endmodule
+
+
+
+
 module tb_mux2;
   reg I0,I1,S;
   wire O;
@@ -981,6 +1045,71 @@ always #5 clk = ~clk;
  
  
  
+ // Testbench for Parameterized 2-input MUX
+module tb_mux2_Parameterizedbit;
+
+    parameter WIDTH = 3;
+
+    logic [WIDTH-1:0] A, B;
+    logic S;
+    logic [WIDTH-1:0] O;
+
+    mux2_Parameterizedbit #(WIDTH) dut(
+        .O(O),
+        .A(A),
+        .B(B),
+        .S(S)
+    );
+
+    integer i;
+
+    initial
+        begin
+            $dumpfile("dump.vcd");
+            $dumpvars(0, tb_mux2_Parameterizedbit);
+
+            for(i = 0; i < 50; i++)
+                begin
+                    A = $random;
+                    B = $random;
+                    S = $random;
+                    #10;
+                end
+            $finish;
+        end
+endmodule
+
+
+
+
+  module tb_mux2_3bit;
+    logic [3:0] A,B,O;
+    logic S;
+    
+    mux2_3bit dut(.A(A), .B(B), .S(S), .O(O));
+    
+      integer i;
+     
+     initial
+        begin
+             $dumpfile("dump.vcd");
+             $dumpvars(0, tb_mux2_3bit);
+                
+             for(i = 0; i< 50; i++)
+                begin
+                    A = $random;
+                    B = $random;     
+                    S = $random;
+                    #10;
+                    end
+                $finish;   
+       end
+ endmodule
+ 
+ 
+ 
+ 
+  
  module tb_mux2_8bit;
     logic [7:0] A,B,O;
     logic S;
@@ -993,6 +1122,33 @@ always #5 clk = ~clk;
         begin
              $dumpfile("dump.vcd");
              $dumpvars(0, tb_mux2_8bit);
+                
+             for(i = 0; i< 50; i++)
+                begin
+                    A = $random;
+                    B = $random;     
+                    S = $random;
+                    #10;
+                    end
+                $finish;   
+       end
+ endmodule
+ 
+ 
+ 
+ 
+  module tb_mux2_9bit;
+    logic [8:0] A,B,O;
+    logic S;
+    
+    mux2_9bit dut(.A(A), .B(B), .S(S), .O(O));
+    
+      integer i;
+     
+     initial
+        begin
+             $dumpfile("dump.vcd");
+             $dumpvars(0, tb_mux2_9bit);
                 
              for(i = 0; i< 50; i++)
                 begin

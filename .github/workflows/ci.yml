@@ -13,6 +13,7 @@ jobs:
   hdl-ci:
     name: HDL CI
     runs-on: ubuntu-latest
+    timeout-minutes: 30 
 
     steps:
       # 1. Check out repository

@@ -102,17 +102,15 @@ endmodule
 
 
 
-
-
 //dsp
 module DSP(clk, rst, cfg_flag, A, B, C, D, E, F, G, ALU_DSP_IN, ALU_DSP_Cin, 
-           cfg_preadder_pipeline_A, cfg_preadder_pipeline_B, cfg_preadder_pipeline_C, cfg_preadder_pipeline_D, cfg_preadder_pipeline_E, cfg_preadder_pipeline_F, cfg_preadder_pipeline_G, cfg_preadder_pipeline_AluDspIn, cfg_preadder_pipeline_AluDspCin,
+           cfg_upper_pipeline_Preadder,  cfg_lower_pipeline_Preadder, cfg_preadder_pipeline_G, cfg_alumode_pipeline_Preadder, cfg_preadder_pipeline_AluDspIn, cfg_preadder_pipeline_AluDspCin,
            cfg_upper_neg_sel, cfg_lower_neg_sel, 
-           cfg_premultiplier_pipeline_Adder_upper, cfg_premultiplier_pipeline_C, cfg_premultiplier_pipeline_Adder_lower, cfg_premultiplier_pipeline_F, cfg_premultiplier_pipeline_G, cfg_premultiplier_pipeline_AluDspIn, cfg_premultiplier_pipeline_AluDspCin,
-           cfg_postmultiplier_pipeline_upper, cfg_postmultiplier_pipeline_lower, cfg_postmultiplier_pipeline_G, cfg_postmultiplier_pipeline_AluDspIn, cfg_postmultiplier_pipeline_AluDspCin,
+           cfg_premultiplier_pipeline_upper, cfg_premultiplier_pipeline_lower, cfg_premultiplier_pipeline_alumode, cfg_premultiplier_pipeline_G, cfg_premultiplier_pipeline_AluDspIn, cfg_premultiplier_pipeline_AluDspCin,
+           cfg_postmultiplier_pipeline_upper, cfg_postmultiplier_pipeline_lower, cfg_postmultiplier_pipeline_alumode, cfg_postmultiplier_pipeline_G, cfg_postmultiplier_pipeline_AluDspIn, cfg_postmultiplier_pipeline_AluDspCin,
            cfg_ALU_operand_sel_A, cfg_ALU_operand_sel_B,
            ALU_mode, cfg_ALU_CarrySel,
-           cfg_feedback_PipeReg, cfg_out_1, cfg_out_2,
+           cfg_out_1, cfg_out_2,
            ALU_DSP_Out, ALU_DSP_Cout, Out1, Out2, ZeroFlag );
 
 
@@ -120,13 +118,12 @@ module DSP(clk, rst, cfg_flag, A, B, C, D, E, F, G, ALU_DSP_IN, ALU_DSP_Cin,
     input logic [15:0] G,ALU_DSP_IN;
     input logic ALU_DSP_Cin;
     input logic clk, rst, cfg_flag;
-    input logic cfg_preadder_pipeline_A, cfg_preadder_pipeline_B, cfg_preadder_pipeline_C, cfg_preadder_pipeline_D, cfg_preadder_pipeline_E, cfg_preadder_pipeline_F, cfg_preadder_pipeline_G, cfg_preadder_pipeline_AluDspIn, cfg_preadder_pipeline_AluDspCin;
+    input logic cfg_upper_pipeline_Preadder,  cfg_lower_pipeline_Preadder, cfg_preadder_pipeline_G, cfg_alumode_pipeline_Preadder, cfg_preadder_pipeline_AluDspIn, cfg_preadder_pipeline_AluDspCin;
     input logic cfg_upper_neg_sel, cfg_lower_neg_sel;
-    input logic cfg_premultiplier_pipeline_Adder_upper, cfg_premultiplier_pipeline_C, cfg_premultiplier_pipeline_Adder_lower, cfg_premultiplier_pipeline_F, cfg_premultiplier_pipeline_G, cfg_premultiplier_pipeline_AluDspIn, cfg_premultiplier_pipeline_AluDspCin;
-    input logic cfg_postmultiplier_pipeline_upper, cfg_postmultiplier_pipeline_lower, cfg_postmultiplier_pipeline_G, cfg_postmultiplier_pipeline_AluDspIn, cfg_postmultiplier_pipeline_AluDspCin;
+    input logic cfg_premultiplier_pipeline_upper, cfg_premultiplier_pipeline_lower, cfg_premultiplier_pipeline_alumode, cfg_premultiplier_pipeline_G, cfg_premultiplier_pipeline_AluDspIn, cfg_premultiplier_pipeline_AluDspCin;
+    input logic cfg_postmultiplier_pipeline_upper, cfg_postmultiplier_pipeline_lower, cfg_postmultiplier_pipeline_alumode, cfg_postmultiplier_pipeline_G, cfg_postmultiplier_pipeline_AluDspIn, cfg_postmultiplier_pipeline_AluDspCin;
     input logic [1:0]cfg_ALU_operand_sel_A, cfg_ALU_operand_sel_B, cfg_ALU_CarrySel;
     input logic [2:0] ALU_mode;
-    input logic cfg_feedback_PipeReg;
     input logic [2:0] cfg_out_1,cfg_out_2;
     
     
@@ -135,10 +132,14 @@ module DSP(clk, rst, cfg_flag, A, B, C, D, E, F, G, ALU_DSP_IN, ALU_DSP_Cin,
 
 
     //wires
+    logic Out_AluDspCin_InPipeReg;
+    logic [1:0]Out_cfgALUCarrySel_InPipeReg;
+    logic [2:0] Out_ALU_InPipeReg;
     logic [7:0] Out_A_InPipeReg, Out_B_InPipeReg, Out_C_InPipeReg, Out_D_InPipeReg, Out_E_InPipeReg, Out_F_InPipeReg;
     logic [15:0] Out_G_InPipeReg, Out_AluDspIn_InPipeReg;
-    logic Out_AluDspCin_InPipeReg;
-    logic wire_PipeSelecetor_latch_A, wire_PipeSelecetor_latch_B, wire_PipeSelecetor_latch_C, wire_PipeSelecetor_latch_D, wire_PipeSelecetor_latch_E, wire_PipeSelecetor_latch_F, wire_PipeSelecetor_latch_G, wire_PipeSelecetor_latch_ALU_DSP_IN, wire_PipeSelecetor_latch_ALU_DSP_Cin;
+    logic wire_PipeSelecetor_latch_ALUmode_wire_PipeSelecetor_latch_A, wire_PipeSelecetor_latch_B, wire_PipeSelecetor_latch_C, wire_PipeSelecetor_latch_D, wire_PipeSelecetor_latch_E, wire_PipeSelecetor_latch_F, wire_PipeSelecetor_latch_G, wire_PipeSelecetor_latch_ALU_DSP_IN, wire_PipeSelecetor_latch_ALU_DSP_Cin;
+    logic [1:0] wire_PipeSelecetor_ALUCarrySel;
+    logic [2:0] wire_PipeSelecetor_ALUmode;
     logic [7:0] wire_PipeSelecetor_A, wire_PipeSelecetor_B, wire_PipeSelecetor_C, wire_PipeSelecetor_D, wire_PipeSelecetor_E, wire_PipeSelecetor_F;
     logic [15:0] wire_PipeSelecetor_G, wire_PipeSelecetor_ALU_DSP_IN;
     logic wire_PipeSelecetor_ALU_DSP_Cin;
@@ -149,27 +150,36 @@ module DSP(clk, rst, cfg_flag, A, B, C, D, E, F, G, ALU_DSP_IN, ALU_DSP_Cin,
     logic [7:0] wire_Preadder_Out_Upper, wire_Preadder_Out_Lower;
     logic wire_Preadder_Cout_Upper, wire_Preadder_Cout_Lower;
     logic [15:0] wire_adder_output_upper, wire_adder_output_lower;
-    logic Wire_premultiplier_pipeline_Latch_Adder_upper, Wire_premultiplier_pipeline_Latch_C, Wire_premultiplier_pipeline_Latch_Adder_lower, Wire_premultiplier_pipeline_Latch_F, Wire_premultiplier_pipeline_Latch_G, Wire_premultiplier_pipeline_Latch_ALU_DSP_IN, Wire_premultiplier_pipeline_Latch_ALU_DSP_Cin;
-    logic [7:0] Wire_PreMulti_PipeReg_Out_AdderUpper, Wire_PreMulti_PipeReg_Out_Adderlower, Wire_PreMulti_PipeReg_Out_C, Wire_PreMulti_PipeReg_Out_F;
+    logic Wire_premultiplier_pipeline_Latch_alumode, Wire_premultiplier_pipeline_Latch_Adder_upper, Wire_premultiplier_pipeline_Latch_C, Wire_premultiplier_pipeline_Latch_Adder_lower, Wire_premultiplier_pipeline_Latch_F, Wire_premultiplier_pipeline_Latch_G, Wire_premultiplier_pipeline_Latch_ALU_DSP_IN, Wire_premultiplier_pipeline_Latch_ALU_DSP_Cin;
+    logic [7:0] Wire_PreMulti_PipeReg_Out_C, Wire_PreMulti_PipeReg_Out_F;
+    logic [8:0] Wire_PreMulti_PipeReg_Out_AdderUpper, Wire_PreMulti_PipeReg_Out_Adderlower;
     logic [15:0] Wire_PreMulti_PipeReg_Out_G, Wire_PreMulti_PipeReg_Out_ALU_DSP_IN;
-    logic Wire_PreMulti_PipeReg_Out_ALU_DSP_Cin ;
-    logic [7:0] wire_PreMulPipeSelecetor_Adder_upper, wire_PreMulPipeSelecetor_C, wire_PreMulPipeSelecetor_Adder_lower, wire_PreMulPipeSelecetor_F;
+    logic Wire_PreMulti_PipeReg_Out_ALU_DSP_Cin;
+    logic [2:0] Wire_PreMulti_PipeReg_Out_alumode ;
+    logic [1:0] Wire_PreMulti_PipeReg_Out_ALUCarrySel ;
+    logic [7:0] wire_PreMulPipeSelecetor_C, wire_PreMulPipeSelecetor_F;
+    logic [8:0] wire_PreMulPipeSelecetor_Adder_upper, wire_PreMulPipeSelecetor_Adder_lower;
     logic [15:0] wire_PreMulPipeSelecetor_G, wire_PreMulPipeSelecetor_ALU_DSP_IN;
-    logic wire_PreMulPipeSelecetor_ALU_DSP_Cin; 
+    logic wire_PreMulPipeSelecetor_ALU_DSP_Cin;
+    logic [2:0] wire_PreMulPipeSelecetor_alumode; 
+    logic [1:0] wire_PreMulPipeSelecetor_ALUCarrySel; 
     logic [15:0] Wire_multiplier_Out_upper, Wire_multiplier_Out_lower; 
-    logic wire_postmultiplierSelector_latch_upper, wire_postmultiplierSelector_latch_lower, wire_postmultiplierSelector_latch_G, wire_postmultiplierSelector_latch_AluDspIn, wire_postmultiplierSelector_latch_AluDspCin;
+    logic wire_postmultiplierSelector_latch_upper, wire_postmultiplierSelector_latch_lower, wire_postmultiplierSelector_latch_alumode, wire_postmultiplierSelector_latch_G, wire_postmultiplierSelector_latch_AluDspIn, wire_postmultiplierSelector_latch_AluDspCin;
     logic [15:0] wire_PostMulti_PipeReg_Out_Upper, wire_PostMulti_PipeReg_Out_lower, wire_PostMulti_PipeReg_Out_G, wire_PostMulti_PipeReg_Out_AluDspIn;
     logic wire_PostMulti_PipeReg_Out_AluDspCin;
+    logic [2:0] wire_PostMulti_PipeReg_Out_alumode;
+    logic [1:0] wire_PostMulti_PipeReg_Out_ALUCarrySel;
     logic [15:0] wire_postMulti_PipeSelector_upper, wire_postMulti_PipeSelector_lower, wire_PostMulti_PipeSelector_G, wire_PostMulti_PipeSelector_ALU_DSP_IN;
     logic wire_PostMulti_PipeSelector_ALU_DSP_Cin;
+    logic [2:0] wire_PostMulti_PipeSelector_alumode;
+    logic [1:0] wire_PostMulti_PipeSelector_ALUCarrySel;
     logic [1:0]cfg_ALU_operand_sel_latch_A, cfg_ALU_operand_sel_latch_B;
     logic [15:0] wire_alu_operand_A, wire_alu_operand_B;
     logic [15:0] Wire_ALU_out;
     logic Wire_ALU_Cout;
     logic Wire_ALU_ZeroFlag;
-    logic wire_feedback_Latch;
-    logic [15:0] wire_feedback_reg, wire_FeedbackMux_out;
-    logic wire_ZeroFlag_reg, wire_ZeroFlagMux_out;
+    logic [15:0] wire_feedback_reg;
+    logic wire_ZeroFlag_reg;
     logic [2:0] wire_out1_Latch, wire_out2_Latch;
     
     
@@ -178,29 +188,44 @@ module DSP(clk, rst, cfg_flag, A, B, C, D, E, F, G, ALU_DSP_IN, ALU_DSP_Cin,
     //Stage 1
     //input pipeline
     //pipeline registers 
-    DFF#(.WIDTH(8)) input_PipeReg_A(.clk(clk), .WE(cfg_flag), .reset(rst), .d(A), .q(Out_A_InPipeReg));
-    DFF#(.WIDTH(8)) input_PipeReg_B(.clk(clk), .WE(cfg_flag), .reset(rst), .d(B), .q(Out_B_InPipeReg));
-    DFF#(.WIDTH(8)) input_PipeReg_C(.clk(clk), .WE(cfg_flag), .reset(rst), .d(C), .q(Out_C_InPipeReg));
-    DFF#(.WIDTH(8)) input_PipeReg_D(.clk(clk), .WE(cfg_flag), .reset(rst), .d(D), .q(Out_D_InPipeReg));
-    DFF#(.WIDTH(8)) input_PipeReg_E(.clk(clk), .WE(cfg_flag), .reset(rst), .d(E), .q(Out_E_InPipeReg));
-    DFF#(.WIDTH(8)) input_PipeReg_F(.clk(clk), .WE(cfg_flag), .reset(rst), .d(F), .q(Out_F_InPipeReg));
-    DFF#(.WIDTH(16)) input_PipeReg_G(.clk(clk), .WE(cfg_flag), .reset(rst), .d(G), .q(Out_G_InPipeReg));
-    DFF#(.WIDTH(16)) input_PipeReg_ALU_DSP_IN(.clk(clk), .WE(cfg_flag), .reset(rst), .d(ALU_DSP_IN), .q(Out_AluDspIn_InPipeReg));
-//    DFF#(.WIDTH(16)) input_PipeReg_ALU_DSP_Cin(.clk(clk), .WE(cfg_flag), .reset(rst), .d(ALU_DSP_Cin), .q(Out_AluDspCin_InPipeReg));
-    DFF input_PipeReg_ALU_DSP_Cin(.clk(clk), .WE(cfg_flag), .reset(rst), .d(ALU_DSP_Cin), .q(Out_AluDspCin_InPipeReg));
-    
+//    DFF input_PipeReg_alu(.clk(clk), .WE(cfg_flag), .reset(rst), .d(ALU_mode), .q(Out_ALU_InPipeReg));
+//    DFF#(.WIDTH(8)) input_PipeReg_A(.clk(clk), .WE(cfg_flag), .reset(rst), .d(A), .q(Out_A_InPipeReg));
+//    DFF#(.WIDTH(8)) input_PipeReg_B(.clk(clk), .WE(cfg_flag), .reset(rst), .d(B), .q(Out_B_InPipeReg));
+//    DFF#(.WIDTH(8)) input_PipeReg_C(.clk(clk), .WE(cfg_flag), .reset(rst), .d(C), .q(Out_C_InPipeReg));
+//    DFF#(.WIDTH(8)) input_PipeReg_D(.clk(clk), .WE(cfg_flag), .reset(rst), .d(D), .q(Out_D_InPipeReg));
+//    DFF#(.WIDTH(8)) input_PipeReg_E(.clk(clk), .WE(cfg_flag), .reset(rst), .d(E), .q(Out_E_InPipeReg));
+//    DFF#(.WIDTH(8)) input_PipeReg_F(.clk(clk), .WE(cfg_flag), .reset(rst), .d(F), .q(Out_F_InPipeReg));
+//    DFF#(.WIDTH(16)) input_PipeReg_G(.clk(clk), .WE(cfg_flag), .reset(rst), .d(G), .q(Out_G_InPipeReg));
+//    DFF#(.WIDTH(16)) input_PipeReg_ALU_DSP_IN(.clk(clk), .WE(cfg_flag), .reset(rst), .d(ALU_DSP_IN), .q(Out_AluDspIn_InPipeReg));
+//    DFF input_PipeReg_ALU_DSP_Cin(.clk(clk), .WE(cfg_flag), .reset(rst), .d(ALU_DSP_Cin), .q(Out_AluDspCin_InPipeReg));
+
+    DFF_noWE#(.WIDTH(2))    input_PipeReg_alucarrysel   (.clk(clk), .reset(rst), .d(cfg_ALU_CarrySel), .q(Out_cfgALUCarrySel_InPipeReg));
+    DFF_noWE#(.WIDTH(3))    input_PipeReg_alumode       (.clk(clk), .reset(rst), .d(ALU_mode),          .q(Out_ALU_InPipeReg));
+    DFF_noWE#(.WIDTH(8))    input_PipeReg_A             (.clk(clk), .reset(rst), .d(A),                 .q(Out_A_InPipeReg));
+    DFF_noWE#(.WIDTH(8))    input_PipeReg_B             (.clk(clk), .reset(rst), .d(B),                 .q(Out_B_InPipeReg));
+    DFF_noWE#(.WIDTH(8))    input_PipeReg_C             (.clk(clk), .reset(rst), .d(C),                 .q(Out_C_InPipeReg));
+    DFF_noWE#(.WIDTH(8))    input_PipeReg_D             (.clk(clk), .reset(rst), .d(D),                 .q(Out_D_InPipeReg));
+    DFF_noWE#(.WIDTH(8))    input_PipeReg_E             (.clk(clk), .reset(rst), .d(E),                 .q(Out_E_InPipeReg));
+    DFF_noWE#(.WIDTH(8))    input_PipeReg_F             (.clk(clk), .reset(rst), .d(F),                 .q(Out_F_InPipeReg));
+    DFF_noWE#(.WIDTH(16))   input_PipeReg_G             (.clk(clk), .reset(rst), .d(G),                 .q(Out_G_InPipeReg));
+    DFF_noWE#(.WIDTH(16))   input_PipeReg_ALU_DSP_IN    (.clk(clk), .reset(rst), .d(ALU_DSP_IN),        .q(Out_AluDspIn_InPipeReg));
+    DFF_noWE                input_PipeReg_ALU_DSP_Cin   (.clk(clk), .reset(rst), .d(ALU_DSP_Cin),       .q(Out_AluDspCin_InPipeReg));
+        
     //first pipeline select latch
-    DLatch #(.WIDTH(1)) In_PipeSelecetor_latch_A( .d(cfg_preadder_pipeline_A), .enable(cfg_flag),.q(wire_PipeSelecetor_latch_A) );
-    DLatch  In_PipeSelecetor_latch_B( .d(cfg_preadder_pipeline_B), .enable(cfg_flag),.q(wire_PipeSelecetor_latch_B) );
-    DLatch In_PipeSelecetor_latch_C( .d(cfg_preadder_pipeline_C), .enable(cfg_flag),.q(wire_PipeSelecetor_latch_C) );
-    DLatch In_PipeSelecetor_latch_D( .d(cfg_preadder_pipeline_D), .enable(cfg_flag),.q(wire_PipeSelecetor_latch_D) );
-    DLatch In_PipeSelecetor_latch_E( .d(cfg_preadder_pipeline_E), .enable(cfg_flag),.q(wire_PipeSelecetor_latch_E) );
-    DLatch In_PipeSelecetor_latch_F( .d(cfg_preadder_pipeline_F), .enable(cfg_flag),.q(wire_PipeSelecetor_latch_F) );
+    DLatch #(.WIDTH(1)) In_PipeSelecetor_latch_ALU( .d(cfg_alumode_pipeline_Preadder), .enable(cfg_flag),.q(wire_PipeSelecetor_latch_ALUmode) );
+    DLatch #(.WIDTH(1)) In_PipeSelecetor_latch_A( .d(cfg_upper_pipeline_Preadder), .enable(cfg_flag),.q(wire_PipeSelecetor_latch_A) );
+    DLatch  In_PipeSelecetor_latch_B( .d(cfg_upper_pipeline_Preadder), .enable(cfg_flag),.q(wire_PipeSelecetor_latch_B) );
+    DLatch In_PipeSelecetor_latch_C( .d(cfg_upper_pipeline_Preadder), .enable(cfg_flag),.q(wire_PipeSelecetor_latch_C) );
+    DLatch In_PipeSelecetor_latch_D( .d(cfg_lower_pipeline_Preadder), .enable(cfg_flag),.q(wire_PipeSelecetor_latch_D) );
+    DLatch In_PipeSelecetor_latch_E( .d(cfg_lower_pipeline_Preadder), .enable(cfg_flag),.q(wire_PipeSelecetor_latch_E) );
+    DLatch In_PipeSelecetor_latch_F( .d(cfg_lower_pipeline_Preadder), .enable(cfg_flag),.q(wire_PipeSelecetor_latch_F) );
     DLatch In_PipeSelecetor_latch_G( .d(cfg_preadder_pipeline_G), .enable(cfg_flag),.q(wire_PipeSelecetor_latch_G) );
     DLatch In_PipeSelecetor_latch_ALU_DSP_IN( .d(cfg_preadder_pipeline_AluDspIn), .enable(cfg_flag),.q(wire_PipeSelecetor_latch_ALU_DSP_IN) );
     DLatch In_PipeSelecetor_latch_ALU_DSP_Cin( .d(cfg_preadder_pipeline_AluDspCin), .enable(cfg_flag),.q(wire_PipeSelecetor_latch_ALU_DSP_Cin) );
     
     //input pipeline mux select
+    mux2_Parameterizedbit#(.WIDTH(2))  In_PipeSelecetor_alucarrysel(.A(cfg_ALU_CarrySel),.B(Out_cfgALUCarrySel_InPipeReg),.S(wire_PipeSelecetor_latch_ALUmode),.O(wire_PipeSelecetor_ALUCarrySel));
+    mux2_3bit In_PipeSelecetor_ALUmode(.A(ALU_mode),.B(Out_ALU_InPipeReg),.S(wire_PipeSelecetor_latch_ALUmode),.O(wire_PipeSelecetor_ALUmode));
     mux2_8bit In_PipeSelecetor_A(.A(A),.B(Out_A_InPipeReg),.S(wire_PipeSelecetor_latch_A),.O(wire_PipeSelecetor_A));
     mux2_8bit In_PipeSelecetor_B(.A(B),.B(Out_B_InPipeReg),.S(wire_PipeSelecetor_latch_B),.O(wire_PipeSelecetor_B));
     mux2_8bit In_PipeSelecetor_C(.A(C),.B(Out_C_InPipeReg),.S(wire_PipeSelecetor_latch_C),.O(wire_PipeSelecetor_C));
@@ -243,27 +268,42 @@ module DSP(clk, rst, cfg_flag, A, B, C, D, E, F, G, ALU_DSP_IN, ALU_DSP_Cin,
    
    //premultiplier pipeline selection
    //latch
-   DLatch  In_PreMultiplier_Pipeline_Latch_A( .d(cfg_premultiplier_pipeline_Adder_upper), .enable(cfg_flag),.q(Wire_premultiplier_pipeline_Latch_Adder_upper));
-   DLatch  In_PreMultiplier_Pipeline_Latch_C( .d(cfg_premultiplier_pipeline_C), .enable(cfg_flag),.q(Wire_premultiplier_pipeline_Latch_C));
-   DLatch  In_PreMultiplier_Pipeline_Latch_D( .d(cfg_premultiplier_pipeline_Adder_lower), .enable(cfg_flag),.q(Wire_premultiplier_pipeline_Latch_Adder_lower));
-   DLatch  In_PreMultiplier_Pipeline_Latch_F( .d(cfg_premultiplier_pipeline_F), .enable(cfg_flag),.q(Wire_premultiplier_pipeline_Latch_F));
+   DLatch  In_PreMultiplier_Pipeline_Latch_ALUmode( .d(cfg_premultiplier_pipeline_alumode), .enable(cfg_flag),.q(Wire_premultiplier_pipeline_Latch_alumode));
+   DLatch  In_PreMultiplier_Pipeline_Latch_A( .d(cfg_premultiplier_pipeline_upper), .enable(cfg_flag),.q(Wire_premultiplier_pipeline_Latch_Adder_upper));
+   DLatch  In_PreMultiplier_Pipeline_Latch_C( .d(cfg_premultiplier_pipeline_upper), .enable(cfg_flag),.q(Wire_premultiplier_pipeline_Latch_C));
+   DLatch  In_PreMultiplier_Pipeline_Latch_D( .d(cfg_premultiplier_pipeline_lower), .enable(cfg_flag),.q(Wire_premultiplier_pipeline_Latch_Adder_lower));
+   DLatch  In_PreMultiplier_Pipeline_Latch_F( .d(cfg_premultiplier_pipeline_lower), .enable(cfg_flag),.q(Wire_premultiplier_pipeline_Latch_F));
    DLatch  In_PreMultiplier_Pipeline_Latch_G( .d(cfg_premultiplier_pipeline_G), .enable(cfg_flag),.q(Wire_premultiplier_pipeline_Latch_G));
    DLatch  In_PreMultiplier_Pipeline_Latch_ALU_DSP_IN( .d(cfg_premultiplier_pipeline_AluDspIn), .enable(cfg_flag),.q(Wire_premultiplier_pipeline_Latch_ALU_DSP_IN));
    DLatch  In_PreMultiplier_Pipeline_Latch_ALU_DSP_Cin( .d(cfg_premultiplier_pipeline_AluDspCin), .enable(cfg_flag),.q(Wire_premultiplier_pipeline_Latch_ALU_DSP_Cin));
    
    // pipeline registers
-    DFF#(.WIDTH(8)) PreMulti_PipeReg_Adder_upper(.clk(clk), .WE(cfg_flag), .reset(rst),  .d(wire_Preadder_Out_Upper),       .q(Wire_PreMulti_PipeReg_Out_AdderUpper));
-    DFF#(.WIDTH(8)) PreMulti_PipeReg_C          (.clk(clk), .WE(cfg_flag), .reset(rst),  .d(wire_PipeSelecetor_C),          .q(Wire_PreMulti_PipeReg_Out_C));
-    DFF#(.WIDTH(8)) PreMulti_PipeReg_Adder_lower(.clk(clk), .WE(cfg_flag), .reset(rst),  .d(wire_Preadder_Out_Lower),       .q(Wire_PreMulti_PipeReg_Out_Adderlower));
-    DFF#(.WIDTH(8)) PreMulti_PipeReg_F          (.clk(clk), .WE(cfg_flag), .reset(rst),  .d(wire_PipeSelecetor_F),          .q(Wire_PreMulti_PipeReg_Out_F));
-    DFF#(.WIDTH(16)) PreMulti_PipeReg_G         (.clk(clk), .WE(cfg_flag), .reset(rst),  .d(wire_PipeSelecetor_G),          .q(Wire_PreMulti_PipeReg_Out_G));
-    DFF#(.WIDTH(16)) PreMulti_PipeReg_ALU_DSP_IN(.clk(clk), .WE(cfg_flag), .reset(rst),  .d(wire_PipeSelecetor_ALU_DSP_IN), .q(Wire_PreMulti_PipeReg_Out_ALU_DSP_IN));
-    DFF PreMulti_PipeReg_ALU_DSP_Cin(.clk(clk), .WE(cfg_flag), .reset(rst), .d(wire_PipeSelecetor_ALU_DSP_Cin),.q(Wire_PreMulti_PipeReg_Out_ALU_DSP_Cin));
+//    DFF PreMulti_PipeReg_Alumode(.clk(clk), .WE(cfg_flag), .reset(rst),  .d(wire_PipeSelecetor_ALUmode),       .q(Wire_PreMulti_PipeReg_Out_alumode));
+//    DFF#(.WIDTH(9)) PreMulti_PipeReg_Adder_upper(.clk(clk), .WE(cfg_flag), .reset(rst),  .d({wire_Preadder_Cout_Upper,wire_Preadder_Out_Upper}),       .q(Wire_PreMulti_PipeReg_Out_AdderUpper));
+//    DFF#(.WIDTH(8)) PreMulti_PipeReg_C          (.clk(clk), .WE(cfg_flag), .reset(rst),  .d(wire_PipeSelecetor_C),          .q(Wire_PreMulti_PipeReg_Out_C));
+//    DFF#(.WIDTH(9)) PreMulti_PipeReg_Adder_lower(.clk(clk), .WE(cfg_flag), .reset(rst),  .d({wire_Preadder_Cout_Lower, wire_Preadder_Out_Lower}),       .q(Wire_PreMulti_PipeReg_Out_Adderlower));
+//    DFF#(.WIDTH(8)) PreMulti_PipeReg_F          (.clk(clk), .WE(cfg_flag), .reset(rst),  .d(wire_PipeSelecetor_F),          .q(Wire_PreMulti_PipeReg_Out_F));
+//    DFF#(.WIDTH(16)) PreMulti_PipeReg_G         (.clk(clk), .WE(cfg_flag), .reset(rst),  .d(wire_PipeSelecetor_G),          .q(Wire_PreMulti_PipeReg_Out_G));
+//    DFF#(.WIDTH(16)) PreMulti_PipeReg_ALU_DSP_IN(.clk(clk), .WE(cfg_flag), .reset(rst),  .d(wire_PipeSelecetor_ALU_DSP_IN), .q(Wire_PreMulti_PipeReg_Out_ALU_DSP_IN));
+//    DFF PreMulti_PipeReg_ALU_DSP_Cin(.clk(clk), .WE(cfg_flag), .reset(rst), .d(wire_PipeSelecetor_ALU_DSP_Cin),.q(Wire_PreMulti_PipeReg_Out_ALU_DSP_Cin));
+
+    DFF_noWE#(.WIDTH(2)) PreMulti_PipeReg_alucarrysel(.clk(clk), .reset(rst),  .d(wire_PipeSelecetor_ALUCarrySel),       .q(Wire_PreMulti_PipeReg_Out_ALUCarrySel));
+    DFF_noWE#(.WIDTH(3)) PreMulti_PipeReg_Alumode    (.clk(clk), .reset(rst),  .d(wire_PipeSelecetor_ALUmode),       .q(Wire_PreMulti_PipeReg_Out_alumode));
+    DFF_noWE#(.WIDTH(9)) PreMulti_PipeReg_Adder_upper(.clk(clk), .reset(rst),  .d({wire_Preadder_Cout_Upper,wire_Preadder_Out_Upper}),       .q(Wire_PreMulti_PipeReg_Out_AdderUpper));
+    DFF_noWE#(.WIDTH(8)) PreMulti_PipeReg_C          (.clk(clk), .reset(rst),  .d(wire_PipeSelecetor_C),          .q(Wire_PreMulti_PipeReg_Out_C));
+    DFF_noWE#(.WIDTH(9)) PreMulti_PipeReg_Adder_lower(.clk(clk), .reset(rst),  .d({wire_Preadder_Cout_Lower, wire_Preadder_Out_Lower}),       .q(Wire_PreMulti_PipeReg_Out_Adderlower));
+    DFF_noWE#(.WIDTH(8)) PreMulti_PipeReg_F          (.clk(clk), .reset(rst),  .d(wire_PipeSelecetor_F),          .q(Wire_PreMulti_PipeReg_Out_F));
+    DFF_noWE#(.WIDTH(16)) PreMulti_PipeReg_G         (.clk(clk), .reset(rst),  .d(wire_PipeSelecetor_G),          .q(Wire_PreMulti_PipeReg_Out_G));
+    DFF_noWE#(.WIDTH(16)) PreMulti_PipeReg_ALU_DSP_IN(.clk(clk), .reset(rst),  .d(wire_PipeSelecetor_ALU_DSP_IN), .q(Wire_PreMulti_PipeReg_Out_ALU_DSP_IN));
+    DFF_noWE PreMulti_PipeReg_ALU_DSP_Cin(.clk(clk), .reset(rst), .d(wire_PipeSelecetor_ALU_DSP_Cin),.q(Wire_PreMulti_PipeReg_Out_ALU_DSP_Cin));
+
     
     //muxes
-    mux2_8bit PreMulti_PipeSelector_Adder_upper  (.A(wire_Preadder_Out_Upper),.B(Wire_PreMulti_PipeReg_Out_AdderUpper),.S(Wire_premultiplier_pipeline_Latch_Adder_upper),.O(wire_PreMulPipeSelecetor_Adder_upper));
+    mux2_Parameterizedbit#(.WIDTH(2))  PreMulti_PipeSelector_alucarrysel(.A(wire_PipeSelecetor_ALUCarrySel),.B(Wire_PreMulti_PipeReg_Out_ALUCarrySel),.S(Wire_premultiplier_pipeline_Latch_alumode),.O(wire_PreMulPipeSelecetor_ALUCarrySel));
+    mux2_3bit PreMulti_PipeSelector_ALUmode  (.A(wire_PipeSelecetor_ALUmode),.B(Wire_PreMulti_PipeReg_Out_alumode),.S(Wire_premultiplier_pipeline_Latch_alumode),.O(wire_PreMulPipeSelecetor_alumode));
+    mux2_9bit PreMulti_PipeSelector_Adder_upper  (.A({wire_Preadder_Cout_Upper,wire_Preadder_Out_Upper}),.B(Wire_PreMulti_PipeReg_Out_AdderUpper),.S(Wire_premultiplier_pipeline_Latch_Adder_upper),.O(wire_PreMulPipeSelecetor_Adder_upper));
     mux2_8bit PreMulti_PipeSelector_C            (.A(wire_PipeSelecetor_C),.B(Wire_PreMulti_PipeReg_Out_C),.S(Wire_premultiplier_pipeline_Latch_C),.O(wire_PreMulPipeSelecetor_C));
-    mux2_8bit PreMulti_PipeSelector_Adder_lower  (.A(wire_Preadder_Out_Lower),.B(Wire_PreMulti_PipeReg_Out_Adderlower),.S(Wire_premultiplier_pipeline_Latch_Adder_lower),.O(wire_PreMulPipeSelecetor_Adder_lower));
+    mux2_9bit PreMulti_PipeSelector_Adder_lower  (.A({wire_Preadder_Cout_Lower, wire_Preadder_Out_Lower}),.B(Wire_PreMulti_PipeReg_Out_Adderlower),.S(Wire_premultiplier_pipeline_Latch_Adder_lower),.O(wire_PreMulPipeSelecetor_Adder_lower));
     mux2_8bit PreMulti_PipeSelector_F            (.A(wire_PipeSelecetor_F),.B(Wire_PreMulti_PipeReg_Out_F),.S(Wire_premultiplier_pipeline_Latch_F),.O(wire_PreMulPipeSelecetor_F));
     mux2_16bit PreMulti_PipeSelector_G            (.A(wire_PipeSelecetor_G),.B(Wire_PreMulti_PipeReg_Out_G),.S(Wire_premultiplier_pipeline_Latch_G),.O(wire_PreMulPipeSelecetor_G));
     mux2_16bit PreMulti_PipeSelector_ALU_DSP_IN   (.A(wire_PipeSelecetor_ALU_DSP_IN),.B(Wire_PreMulti_PipeReg_Out_ALU_DSP_IN),.S(Wire_premultiplier_pipeline_Latch_ALU_DSP_IN),.O(wire_PreMulPipeSelecetor_ALU_DSP_IN));
@@ -272,13 +312,14 @@ module DSP(clk, rst, cfg_flag, A, B, C, D, E, F, G, ALU_DSP_IN, ALU_DSP_Cin,
 
 
     //multiplier
-    multiplier_8bit multiplier_upper(.A(wire_PreMulPipeSelecetor_Adder_upper), .B(wire_PreMulPipeSelecetor_C), .Out(Wire_multiplier_Out_upper));
-    multiplier_8bit multiplier_lower(.A(wire_PreMulPipeSelecetor_Adder_lower), .B(wire_PreMulPipeSelecetor_F), .Out(Wire_multiplier_Out_lower));
+    multiplier_8bit multiplier_upper(.A(wire_PreMulPipeSelecetor_Adder_upper[7:0]), .B(wire_PreMulPipeSelecetor_C), .Out(Wire_multiplier_Out_upper));
+    multiplier_8bit multiplier_lower(.A(wire_PreMulPipeSelecetor_Adder_lower[7:0]), .B(wire_PreMulPipeSelecetor_F), .Out(Wire_multiplier_Out_lower));
     
     
     
     //post multiplier pipeline and bypass   
     //latches
+    DLatch  In_PostMultiplier_Pipeline_ALUmode( .d(cfg_postmultiplier_pipeline_alumode), .enable(cfg_flag),.q(wire_postmultiplierSelector_latch_alumode));
     DLatch  In_PostMultiplier_Pipeline_upper( .d(cfg_postmultiplier_pipeline_upper), .enable(cfg_flag),.q(wire_postmultiplierSelector_latch_upper));
     DLatch  In_PostMultiplier_Pipeline_lower( .d(cfg_postmultiplier_pipeline_lower), .enable(cfg_flag),.q(wire_postmultiplierSelector_latch_lower));
     DLatch  In_PostMultiplier_Pipeline_G( .d(cfg_postmultiplier_pipeline_G), .enable(cfg_flag),.q(wire_postmultiplierSelector_latch_G));
@@ -286,11 +327,21 @@ module DSP(clk, rst, cfg_flag, A, B, C, D, E, F, G, ALU_DSP_IN, ALU_DSP_Cin,
     DLatch  In_PostMultiplier_Pipeline_AluDspCin( .d(cfg_postmultiplier_pipeline_AluDspCin), .enable(cfg_flag),.q(wire_postmultiplierSelector_latch_AluDspCin));
     
     //pipeline reg
-    DFF#(.WIDTH(16)) PostMulti_PipeReg_Upper        (.clk(clk), .WE(cfg_flag), .reset(rst), .d(Wire_multiplier_Out_upper), .q(wire_PostMulti_PipeReg_Out_Upper));
-    DFF#(.WIDTH(16)) PostMulti_PipeReg_lower        (.clk(clk), .WE(cfg_flag), .reset(rst), .d(Wire_multiplier_Out_lower), .q(wire_PostMulti_PipeReg_Out_lower));
-    DFF#(.WIDTH(16)) PostMulti_PipeReg_G            (.clk(clk), .WE(cfg_flag), .reset(rst), .d(wire_PreMulPipeSelecetor_G), .q(wire_PostMulti_PipeReg_Out_G));
-    DFF#(.WIDTH(16)) PostMulti_PipeReg_ALU_DSP_IN   (.clk(clk), .WE(cfg_flag), .reset(rst), .d(wire_PreMulPipeSelecetor_ALU_DSP_IN), .q(wire_PostMulti_PipeReg_Out_AluDspIn));
-    DFF  PostMulti_PipeReg_ALU_DSP_Cin  (.clk(clk), .WE(cfg_flag), .reset(rst), .d(wire_PreMulPipeSelecetor_ALU_DSP_Cin), .q(wire_PostMulti_PipeReg_Out_AluDspCin));
+//    DFF#(.WIDTH(16)) PostMulti_PipeReg_Upper        (.clk(clk), .WE(cfg_flag), .reset(rst), .d(Wire_multiplier_Out_upper), .q(wire_PostMulti_PipeReg_Out_Upper));
+//    DFF#(.WIDTH(16)) PostMulti_PipeReg_lower        (.clk(clk), .WE(cfg_flag), .reset(rst), .d(Wire_multiplier_Out_lower), .q(wire_PostMulti_PipeReg_Out_lower));
+//    DFF#(.WIDTH(16)) PostMulti_PipeReg_G            (.clk(clk), .WE(cfg_flag), .reset(rst), .d(wire_PreMulPipeSelecetor_G), .q(wire_PostMulti_PipeReg_Out_G));
+//    DFF#(.WIDTH(16)) PostMulti_PipeReg_ALU_DSP_IN   (.clk(clk), .WE(cfg_flag), .reset(rst), .d(wire_PreMulPipeSelecetor_ALU_DSP_IN), .q(wire_PostMulti_PipeReg_Out_AluDspIn));
+//    DFF  PostMulti_PipeReg_ALU_DSP_Cin  (.clk(clk), .WE(cfg_flag), .reset(rst), .d(wire_PreMulPipeSelecetor_ALU_DSP_Cin), .q(wire_PostMulti_PipeReg_Out_AluDspCin));
+//    DFF  PostMulti_PipeReg_ALUmode  (.clk(clk), .WE(cfg_flag), .reset(rst), .d(wire_PreMulPipeSelecetor_alumode), .q(wire_PostMulti_PipeReg_Out_alumode));
+
+    DFF_noWE#(.WIDTH(16)) PostMulti_PipeReg_Upper        (.clk(clk),  .reset(rst), .d(Wire_multiplier_Out_upper), .q(wire_PostMulti_PipeReg_Out_Upper));
+    DFF_noWE#(.WIDTH(16)) PostMulti_PipeReg_lower        (.clk(clk),  .reset(rst), .d(Wire_multiplier_Out_lower), .q(wire_PostMulti_PipeReg_Out_lower));
+    DFF_noWE#(.WIDTH(16)) PostMulti_PipeReg_G            (.clk(clk),  .reset(rst), .d(wire_PreMulPipeSelecetor_G), .q(wire_PostMulti_PipeReg_Out_G));
+    DFF_noWE#(.WIDTH(16)) PostMulti_PipeReg_ALU_DSP_IN   (.clk(clk),  .reset(rst), .d(wire_PreMulPipeSelecetor_ALU_DSP_IN), .q(wire_PostMulti_PipeReg_Out_AluDspIn));
+    DFF_noWE  PostMulti_PipeReg_ALU_DSP_Cin              (.clk(clk), .reset(rst), .d(wire_PreMulPipeSelecetor_ALU_DSP_Cin), .q(wire_PostMulti_PipeReg_Out_AluDspCin));
+    DFF_noWE#(.WIDTH(3))  PostMulti_PipeReg_ALUmode      (.clk(clk), .reset(rst), .d(wire_PreMulPipeSelecetor_alumode), .q(wire_PostMulti_PipeReg_Out_alumode));
+    DFF_noWE#(.WIDTH(2))  PostMulti_PipeReg_alucarrysel  (.clk(clk), .reset(rst), .d(wire_PreMulPipeSelecetor_ALUCarrySel), .q(wire_PostMulti_PipeReg_Out_ALUCarrySel));
+    
     
     //Muxes
     mux2_16bit postMulti_PipeSelector_upper        (.A(Wire_multiplier_Out_upper),.B(wire_PostMulti_PipeReg_Out_Upper),.S(wire_postmultiplierSelector_latch_upper),.O(wire_postMulti_PipeSelector_upper));
@@ -298,11 +349,13 @@ module DSP(clk, rst, cfg_flag, A, B, C, D, E, F, G, ALU_DSP_IN, ALU_DSP_Cin,
     mux2_16bit PostMulti_PipeSelector_G            (.A(wire_PreMulPipeSelecetor_G),.B(wire_PostMulti_PipeReg_Out_G),.S(wire_postmultiplierSelector_latch_G),.O(wire_PostMulti_PipeSelector_G));
     mux2_16bit PostMulti_PipeSelector_ALU_DSP_IN   (.A(wire_PreMulPipeSelecetor_ALU_DSP_IN),.B(wire_PostMulti_PipeReg_Out_AluDspIn),.S(wire_postmultiplierSelector_latch_AluDspIn),.O(wire_PostMulti_PipeSelector_ALU_DSP_IN));
     mux_2 PostMulti_PipeSelector_ALU_DSP_Cin  (.I0(wire_PreMulPipeSelecetor_ALU_DSP_Cin),.I1(wire_PostMulti_PipeReg_Out_AluDspCin),.S(wire_postmultiplierSelector_latch_AluDspCin),.O(wire_PostMulti_PipeSelector_ALU_DSP_Cin));
+    mux2_3bit PostMulti_PipeSelector_ALUmode  (.A(wire_PreMulPipeSelecetor_alumode),.B(wire_PostMulti_PipeReg_Out_alumode),.S(wire_postmultiplierSelector_latch_alumode),.O(wire_PostMulti_PipeSelector_alumode));
+    mux2_Parameterizedbit#(.WIDTH(2))  postMulti_PipeSelector_alucarrysel(.A(wire_PreMulPipeSelecetor_ALUCarrySel),.B(wire_PostMulti_PipeReg_Out_ALUCarrySel),.S(wire_postmultiplierSelector_latch_alumode),.O(wire_PostMulti_PipeSelector_ALUCarrySel));
+
     
-    
-    //adder output selection
-    mux2_16bit adder_outputSelector_upper (.A({7'b0, wire_Preadder_Cout_Upper, wire_Preadder_Out_Upper}), .B({{8{wire_Preadder_Out_Upper[7]}}, wire_Preadder_Out_Upper}), .S(wire_SubSelecetor_latch_Upper),  .O(wire_adder_output_upper));
-    mux2_16bit adder_outputSelector_lower (.A({7'b0, wire_Preadder_Cout_Lower, wire_Preadder_Out_Lower}), .B({{8{wire_Preadder_Out_Lower[7]}}, wire_Preadder_Out_Lower}), .S(wire_SubSelecetor_latch_Lower),  .O(wire_adder_output_lower));
+    //adder output selection                                              cout,out                                                                                out
+    mux2_16bit adder_outputSelector_upper (.A({7'b0, wire_PreMulPipeSelecetor_Adder_upper}), .B({{8{wire_PreMulPipeSelecetor_Adder_upper[7]}}, wire_PreMulPipeSelecetor_Adder_upper[7:0]}), .S(wire_SubSelecetor_latch_Upper),  .O(wire_adder_output_upper));
+    mux2_16bit adder_outputSelector_lower (.A({7'b0, wire_PreMulPipeSelecetor_Adder_lower}), .B({{8{wire_PreMulPipeSelecetor_Adder_lower[7]}}, wire_PreMulPipeSelecetor_Adder_lower[7:0]}), .S(wire_SubSelecetor_latch_Lower),  .O(wire_adder_output_lower));
 
     
     //stage 3
@@ -312,38 +365,33 @@ module DSP(clk, rst, cfg_flag, A, B, C, D, E, F, G, ALU_DSP_IN, ALU_DSP_Cin,
     DLatch#(.WIDTH(2))  In_ALU_Selector_Latch_lower( .d(cfg_ALU_operand_sel_B), .enable(cfg_flag), .q(cfg_ALU_operand_sel_latch_B));
     
     //muxes
-    mux4_16bit ALU_Selector_upper (.I0(wire_postMulti_PipeSelector_upper), .I1(wire_PostMulti_PipeSelector_G), .I2(wire_PostMulti_PipeSelector_ALU_DSP_IN), .I3(wire_FeedbackMux_out), .S(cfg_ALU_operand_sel_latch_A), .O(wire_alu_operand_A));
-    mux4_16bit ALU_Selector_LOWer (.I0(wire_postMulti_PipeSelector_lower), .I1(wire_PostMulti_PipeSelector_G), .I2(wire_PostMulti_PipeSelector_ALU_DSP_IN), .I3(wire_FeedbackMux_out), .S(cfg_ALU_operand_sel_latch_B), .O(wire_alu_operand_B));
+    mux4_16bit ALU_Selector_upper (.I0(wire_postMulti_PipeSelector_upper), .I1(wire_PostMulti_PipeSelector_G), .I2(wire_PostMulti_PipeSelector_ALU_DSP_IN), .I3(wire_feedback_reg), .S(cfg_ALU_operand_sel_latch_A), .O(wire_alu_operand_A));
+    mux4_16bit ALU_Selector_LOWer (.I0(wire_postMulti_PipeSelector_lower), .I1(wire_PostMulti_PipeSelector_G), .I2(wire_PostMulti_PipeSelector_ALU_DSP_IN), .I3(wire_feedback_reg), .S(cfg_ALU_operand_sel_latch_B), .O(wire_alu_operand_B));
     
         
     //ALU instantiation
-    ALU DSP_ALU (.ALU_mode(ALU_mode), .cfg_flag(cfg_flag), .A(wire_alu_operand_A), .B(wire_alu_operand_B), .cfg_ALU_CarrySel(cfg_ALU_CarrySel), .ALU_Carry_IN(wire_PostMulti_PipeSelector_ALU_DSP_Cin), .Out(Wire_ALU_out), .CarryOut(Wire_ALU_Cout), .ZeroFlag(Wire_ALU_ZeroFlag));
+    ALU DSP_ALU (.ALU_mode(wire_PostMulti_PipeSelector_alumode), .cfg_flag(cfg_flag), .A(wire_alu_operand_A), .B(wire_alu_operand_B), .cfg_ALU_CarrySel(wire_PostMulti_PipeSelector_ALUCarrySel), .ALU_Carry_IN(wire_PostMulti_PipeSelector_ALU_DSP_Cin), .Out(Wire_ALU_out), .CarryOut(Wire_ALU_Cout), .ZeroFlag(Wire_ALU_ZeroFlag));
     
     
     
     
     //stage 4
     //output generation
-     DLatch  out_Feedback_latch( .d(cfg_feedback_PipeReg), .enable(cfg_flag),.q(wire_feedback_Latch));
-     DFF#(.WIDTH(16)) feedback_PipeReg  (.clk(clk), .WE(cfg_flag), .reset(rst), .d(Wire_ALU_out), .q(wire_feedback_reg));
-     mux2_16bit AluFeedback_Selector_mux (.A(Wire_ALU_out),.B(wire_feedback_reg),.S(wire_feedback_Latch),.O(wire_FeedbackMux_out));
-    
-     DFF ZeroFlag_PipeReg  (.clk(clk), .WE(cfg_flag), .reset(rst), .d(Wire_ALU_ZeroFlag), .q(wire_ZeroFlag_reg));
-     mux_2 ZeroFlag_Selector_mux (.I0(Wire_ALU_ZeroFlag),.I1(wire_ZeroFlag_reg),.S(wire_feedback_Latch),.O(wire_ZeroFlagMux_out));
-    
-    
-    
+     DFF_noWE#(.WIDTH(16)) feedback_PipeReg  (.clk(clk),  .reset(rst), .d(Wire_ALU_out), .q(wire_feedback_reg));
+     DFF_noWE ZeroFlag_PipeReg  (.clk(clk),  .reset(rst), .d(Wire_ALU_ZeroFlag), .q(wire_ZeroFlag_reg));
+
      DLatch#(.WIDTH(3))  out1_latch( .d(cfg_out_1), .enable(cfg_flag),.q(wire_out1_Latch));
      DLatch#(.WIDTH(3))  out2_latch( .d(cfg_out_2), .enable(cfg_flag),.q(wire_out2_Latch));
 
-     Mux8_16bit out1_mux(.O(Out1), .A(wire_adder_output_upper), .B(wire_postMulti_PipeSelector_upper), .C(wire_FeedbackMux_out), .D(wire_adder_output_lower), .E(wire_postMulti_PipeSelector_lower), .F(16'b0), .G(16'b0), .H(16'b0), .S(wire_out1_Latch));
-     Mux8_16bit out2_mux(.O(Out2), .A(wire_adder_output_upper), .B(wire_postMulti_PipeSelector_upper), .C(wire_FeedbackMux_out), .D(wire_adder_output_lower), .E(wire_postMulti_PipeSelector_lower), .F(16'b0), .G(16'b0), .H(16'b0), .S(wire_out2_Latch));
+     Mux8_16bit out1_mux(.O(Out1), .A(wire_adder_output_upper), .B(wire_postMulti_PipeSelector_upper), .C(wire_feedback_reg), .D(wire_adder_output_lower), .E(wire_postMulti_PipeSelector_lower), .F(16'b0), .G(16'b0), .H(16'b0), .S(wire_out1_Latch));
+     Mux8_16bit out2_mux(.O(Out2), .A(wire_adder_output_upper), .B(wire_postMulti_PipeSelector_upper), .C(wire_feedback_reg), .D(wire_adder_output_lower), .E(wire_postMulti_PipeSelector_lower), .F(16'b0), .G(16'b0), .H(16'b0), .S(wire_out2_Latch));
     
     
     
     
     assign ALU_DSP_Out = Wire_ALU_out;
     assign ALU_DSP_Cout = Wire_ALU_Cout;
+    assign ZeroFlag = wire_ZeroFlag_reg;
  
 
 
