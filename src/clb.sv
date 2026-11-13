@@ -122,8 +122,8 @@ module LUT6(clk,cfg_flag,a,b,c,d,e,f, Data_in, write_en_0, write_en_1, write_en_
         
     //stage 1
     //1. input carry lower nibble
-        mux_4 lower_carry_selector(.I0(Cin_bits0),.I1(1'b0),.I2(1'b0),.I3(1'b1),.S(wire_Carry_Lower_Latch),.O(wire_Carry_Lower_Sel));
-        mux_4 upper_carry_selector(.I0(Wire_Cout_Lower),.I1(Cin_bits1),.I2(1'b0),.I3(1'b1),.S(wire_Carry_Lower_Latch),.O(wire_Carry_Upper_out));
+        mux_4 lower_carry_selector(.I0(Cin_bits0),.I1(1'b0),.I2(1'b1),.I3(1'b1),.S(wire_Carry_Lower_Latch),.O(wire_Carry_Lower_Sel));
+        mux_4 upper_carry_selector(.I0(Wire_Cout_Lower),.I1(Cin_bits1),.I2(1'b1),.I3(1'b1),.S(wire_Carry_Lower_Latch),.O(wire_Carry_Upper_out));
             
             
     //3. adders
@@ -167,22 +167,20 @@ endmodule
 
 
 
-module clb_1_bit (clk,a,b,c,d,e,f, Data_in, cfg_write_en_0, cfg_write_en_1, cfg_write_en_2, cfg_write_en_3, cfg_write_en_4, cfg_write_en_5, cfg_write_en_6, cfg_write_en_7, Cin_lower_nibble, Cin_upper_nibble, Carry_select_Int_0,Carry_select_Int_1, LowerNibble_negVal_sel, UpperNibble_negVal_sel, O_6, O_5, Sum_0, Sum_1, Cout_lower_nibble, Sum_2, Sum_3, Cout_upper_nibble, sel_clb_out, cfg_sel_clb_out, sel_Dff_out, cfg_sel_Dff_out, dff_Write_enable, dff_reset, out, Mem_out);
+module clb_1_bit (clk, cfg_flag, a, b, c, d, e, f, Data_in, write_en_0, write_en_1, write_en_2, write_en_3, write_en_4, write_en_5, write_en_6, write_en_7, Cin_bits0, Cin_bits1, cfg_Carry_select_Int_0, cfg_Carry_select_Int_1, O_6, O_5, Sum_0, Sum_1, Cout_lower, Sum_2, Sum_3, Cout_upper, cfg_sel_clb_out, cfg_sel_Dff_out, dff_reset, out, Mem_out);
 
 
     //lut6
-    input logic clk;
+    input logic clk, cfg_flag;
     input logic a,b,c,d,e,f, Data_in;
-    input logic cfg_write_en_0, cfg_write_en_1, cfg_write_en_2, cfg_write_en_3, cfg_write_en_4, cfg_write_en_5, cfg_write_en_6, cfg_write_en_7;
-    input logic Cin_lower_nibble, Cin_upper_nibble;
-    input logic LowerNibble_negVal_sel, UpperNibble_negVal_sel;
-    input logic [1:0]Carry_select_Int_0,Carry_select_Int_1;
+    input logic write_en_0, write_en_1, write_en_2, write_en_3, write_en_4, write_en_5, write_en_6, write_en_7;
+    input logic Cin_bits0, Cin_bits1;
+    input logic [1:0] cfg_Carry_select_Int_0, cfg_Carry_select_Int_1;
     output logic O_6, O_5;
-    output logic Sum_0, Sum_1, Cout_lower_nibble, Sum_2, Sum_3, Cout_upper_nibble;
+    output logic Sum_0, Sum_1, Cout_lower, Sum_2, Sum_3, Cout_upper;
     //clb 
-    input logic [1:0]sel_clb_out, sel_Dff_out;
-    input logic cfg_sel_clb_out, cfg_sel_Dff_out;
-    input logic dff_Write_enable, dff_reset;
+    input logic [1:0] cfg_sel_clb_out, cfg_sel_Dff_out;
+    input logic  dff_reset;
     output logic out, Mem_out;
     
     
@@ -196,22 +194,21 @@ module clb_1_bit (clk,a,b,c,d,e,f, Data_in, cfg_write_en_0, cfg_write_en_1, cfg_
     
 //  
     //stage 0
-    LUT6 Clb_1bit_lut6( .clk(clk), .d(d), .e(e), .f(f), .a(a), .b(b), .c(c), .Data_in(Data_in), 
-                        .cfg_write_en_0(cfg_write_en_0), .cfg_write_en_1(cfg_write_en_1), .cfg_write_en_2(cfg_write_en_2), .cfg_write_en_3(cfg_write_en_3), .cfg_write_en_4(cfg_write_en_4), .cfg_write_en_5(cfg_write_en_5), .cfg_write_en_6(cfg_write_en_6), .cfg_write_en_7(cfg_write_en_7), 
-                        .Cin_lower_nibble(Cin_lower_nibble), .Cin_upper_nibble(Cin_upper_nibble), .Carry_select_Int_0(Carry_select_Int_0), .Carry_select_Int_1(Carry_select_Int_1), 
-                        .LowerNibble_negVal_sel(LowerNibble_negVal_sel), .UpperNibble_negVal_sel(UpperNibble_negVal_sel), 
-                        .O_6(O_6), .O_5(O_5), .Sum_0(Sum_0), .Sum_1(Sum_1), .Cout_lower_nibble(Cout_lower_nibble), .Sum_2(Sum_2), .Sum_3(Sum_3), .Cout_upper_nibble(Cout_upper_nibble));
+    LUT6 Clb_1bit_lut6( .clk(clk), .cfg_flag(cfg_flag), .d(d), .e(e), .f(f), .a(a), .b(b), .c(c), .Data_in(Data_in), 
+                        .write_en_0(write_en_0), .write_en_1(write_en_1), .write_en_2(write_en_2), .write_en_3(write_en_3), .write_en_4(write_en_4), .write_en_5(write_en_5), .write_en_6(write_en_6), .write_en_7(write_en_7), 
+                        .Cin_bits0(Cin_bits0), .Cin_bits1(Cin_bits1), .cfg_Carry_select_Int_0(cfg_Carry_select_Int_0), .cfg_Carry_select_Int_1(cfg_Carry_select_Int_1), 
+                        .O_6(O_6), .O_5(O_5), .Sum_0(Sum_0), .Sum_1(Sum_1), .Cout_lower(Cout_lower), .Sum_2(Sum_2), .Sum_3(Sum_3), .Cout_upper(Cout_upper));
     
     //stage1
-    DLatch #(.WIDTH(2)) Out_selMux_latch( .d(sel_clb_out), .enable(cfg_sel_clb_out),.q(Wire_Out_SelMux) );
-    DLatch #(.WIDTH(2)) Dff_selMux_latch( .d(sel_Dff_out), .enable(cfg_sel_Dff_out),.q(Wire_dff_SelMux) );
+    DLatch #(.WIDTH(2)) Out_selMux_latch( .d(cfg_sel_clb_out), .enable(cfg_flag),.q(Wire_Out_SelMux) );
+    DLatch #(.WIDTH(2)) Dff_selMux_latch( .d(cfg_sel_Dff_out), .enable(cfg_flag),.q(Wire_dff_SelMux) );
     
     //stage 2
     mux_4 out_sel_mux (.I0(1'b0), .I1(O_6), .I2(O_5), .I3(Data_in), .S(Wire_Out_SelMux), .O(Wire_direct_out));
     mux_4 dff_ip_mux (.I0(1'b0), .I1(O_6), .I2(O_5), .I3(Data_in), .S(Wire_dff_SelMux), .O(Wire_mux_to_dff));
 
     //stage 3
-    DFF clb_dff(.clk(clk),.WE(dff_Write_enable),.reset(dff_reset), .d(Wire_mux_to_dff), .q(Wire_dff_out));
+    DFF_noWE clb_dff(.clk(clk), .reset(dff_reset), .d(Wire_mux_to_dff), .q(Wire_dff_out));
     
     
     assign out = Wire_direct_out;
