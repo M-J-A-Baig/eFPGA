@@ -666,7 +666,7 @@ endmodule
 
 module tb_clb;
         
-        logic clk, cfg_flag, Cin_8_to_16, Cin_16_to_24, Cin_24_to_32;
+        logic clk, cfg_flag, Cin_8_to_16, Cin_16_to_24, Cin_24_to_32, reset = 0;;
         logic [1:0] cfg_Cin_8_to_16, cfg_Cin_16_to_24, cfg_Cin_24_to_32;
         
         // bit 0
@@ -679,7 +679,6 @@ module tb_clb;
         logic bit0_Sum_0, bit0_Sum_1, bit0_Cout_lower, bit0_Sum_2, bit0_Sum_3, bit0_Cout_upper;
         // clb
         logic [1:0] bit0_cfg_sel_clb_out, bit0_cfg_sel_Dff_out;
-        logic bit0_dff_reset;
         logic bit0_out, bit0_Mem_out;
         
         // bit 1
@@ -692,7 +691,6 @@ module tb_clb;
         logic bit1_Sum_0, bit1_Sum_1, bit1_Cout_lower, bit1_Sum_2, bit1_Sum_3, bit1_Cout_upper;
         // clb
         logic [1:0] bit1_cfg_sel_clb_out, bit1_cfg_sel_Dff_out;
-        logic bit1_dff_reset;
         logic bit1_out, bit1_Mem_out;
         
         // bit 2
@@ -705,7 +703,6 @@ module tb_clb;
         logic bit2_Sum_0, bit2_Sum_1, bit2_Cout_lower, bit2_Sum_2, bit2_Sum_3, bit2_Cout_upper;
         // clb
         logic [1:0] bit2_cfg_sel_clb_out, bit2_cfg_sel_Dff_out;
-        logic bit2_dff_reset;
         logic bit2_out, bit2_Mem_out;
         
         // bit 3
@@ -718,7 +715,6 @@ module tb_clb;
         logic bit3_Sum_0, bit3_Sum_1, bit3_Cout_lower, bit3_Sum_2, bit3_Sum_3, bit3_Cout_upper;
         // clb
         logic [1:0] bit3_cfg_sel_clb_out, bit3_cfg_sel_Dff_out;
-        logic bit3_dff_reset;
         logic bit3_out, bit3_Mem_out;
         
         // bit 4
@@ -731,7 +727,6 @@ module tb_clb;
         logic bit4_Sum_0, bit4_Sum_1, bit4_Cout_lower, bit4_Sum_2, bit4_Sum_3, bit4_Cout_upper;
         // clb
         logic [1:0] bit4_cfg_sel_clb_out, bit4_cfg_sel_Dff_out;
-        logic bit4_dff_reset;
         logic bit4_out, bit4_Mem_out;
         
         // bit 5
@@ -744,7 +739,6 @@ module tb_clb;
         logic bit5_Sum_0, bit5_Sum_1, bit5_Cout_lower, bit5_Sum_2, bit5_Sum_3, bit5_Cout_upper;
         // clb
         logic [1:0] bit5_cfg_sel_clb_out, bit5_cfg_sel_Dff_out;
-        logic bit5_dff_reset;
         logic bit5_out, bit5_Mem_out;
         
         // bit 6
@@ -757,7 +751,6 @@ module tb_clb;
         logic bit6_Sum_0, bit6_Sum_1, bit6_Cout_lower, bit6_Sum_2, bit6_Sum_3, bit6_Cout_upper;
         // clb
         logic [1:0] bit6_cfg_sel_clb_out, bit6_cfg_sel_Dff_out;
-        logic bit6_dff_reset;
         logic bit6_out, bit6_Mem_out;
         
         // bit 7
@@ -770,7 +763,6 @@ module tb_clb;
         logic bit7_Sum_0, bit7_Sum_1, bit7_Cout_lower, bit7_Sum_2, bit7_Sum_3, bit7_Cout_upper;
         // clb
         logic [1:0] bit7_cfg_sel_clb_out, bit7_cfg_sel_Dff_out;
-        logic bit7_dff_reset;
         logic bit7_out, bit7_Mem_out;
         
         
@@ -790,15 +782,15 @@ module tb_clb;
         
         
     clb  dut(
-    .clk(clk), .cfg_flag(cfg_flag), .cfg_Cin_8_to_16(cfg_Cin_8_to_16), .cfg_Cin_16_to_24(cfg_Cin_16_to_24), .cfg_Cin_24_to_32(cfg_Cin_24_to_32), .Cin_8_to_16(Cin_8_to_16), .Cin_16_to_24(Cin_16_to_24), .Cin_24_to_32(Cin_24_to_32),
-    .bit0_a(bit0_a), .bit0_b(bit0_b), .bit0_c(bit0_c), .bit0_d(bit0_d), .bit0_e(bit0_e), .bit0_f(bit0_f), .bit0_Data_in(bit0_Data_in), .bit0_write_en_0(bit0_write_en_0), .bit0_write_en_1(bit0_write_en_1), .bit0_write_en_2(bit0_write_en_2), .bit0_write_en_3(bit0_write_en_3), .bit0_write_en_4(bit0_write_en_4), .bit0_write_en_5(bit0_write_en_5), .bit0_write_en_6(bit0_write_en_6), .bit0_write_en_7(bit0_write_en_7), .bit0_Cin_bits0(bit0_Cin_bits0), .bit0_Cin_bits1(bit0_Cin_bits1), .bit0_cfg_Carry_select_Int_0(bit0_cfg_Carry_select_Int_0), .bit0_cfg_Carry_select_Int_1(bit0_cfg_Carry_select_Int_1), .bit0_O_6(bit0_O_6), .bit0_O_5(bit0_O_5), .bit0_Sum_0(bit0_Sum_0), .bit0_Sum_1(bit0_Sum_1), .bit0_Cout_lower(bit0_Cout_lower), .bit0_Sum_2(bit0_Sum_2), .bit0_Sum_3(bit0_Sum_3), .bit0_Cout_upper(bit0_Cout_upper), .bit0_cfg_sel_clb_out(bit0_cfg_sel_clb_out), .bit0_cfg_sel_Dff_out(bit0_cfg_sel_Dff_out), .bit0_dff_reset(bit0_dff_reset), .bit0_out(bit0_out), .bit0_Mem_out(bit0_Mem_out),
-    .bit1_a(bit1_a), .bit1_b(bit1_b), .bit1_c(bit1_c), .bit1_d(bit1_d), .bit1_e(bit1_e), .bit1_f(bit1_f), .bit1_Data_in(bit1_Data_in), .bit1_write_en_0(bit1_write_en_0), .bit1_write_en_1(bit1_write_en_1), .bit1_write_en_2(bit1_write_en_2), .bit1_write_en_3(bit1_write_en_3), .bit1_write_en_4(bit1_write_en_4), .bit1_write_en_5(bit1_write_en_5), .bit1_write_en_6(bit1_write_en_6), .bit1_write_en_7(bit1_write_en_7),                                  .bit1_Cin_bits1(bit1_Cin_bits1), .bit1_cfg_Carry_select_Int_0(bit1_cfg_Carry_select_Int_0), .bit1_cfg_Carry_select_Int_1(bit1_cfg_Carry_select_Int_1), .bit1_O_6(bit1_O_6), .bit1_O_5(bit1_O_5), .bit1_Sum_0(bit1_Sum_0), .bit1_Sum_1(bit1_Sum_1), .bit1_Cout_lower(bit1_Cout_lower), .bit1_Sum_2(bit1_Sum_2), .bit1_Sum_3(bit1_Sum_3), .bit1_Cout_upper(bit1_Cout_upper), .bit1_cfg_sel_clb_out(bit1_cfg_sel_clb_out), .bit1_cfg_sel_Dff_out(bit1_cfg_sel_Dff_out), .bit1_dff_reset(bit1_dff_reset), .bit1_out(bit1_out), .bit1_Mem_out(bit1_Mem_out),
-    .bit2_a(bit2_a), .bit2_b(bit2_b), .bit2_c(bit2_c), .bit2_d(bit2_d), .bit2_e(bit2_e), .bit2_f(bit2_f), .bit2_Data_in(bit2_Data_in), .bit2_write_en_0(bit2_write_en_0), .bit2_write_en_1(bit2_write_en_1), .bit2_write_en_2(bit2_write_en_2), .bit2_write_en_3(bit2_write_en_3), .bit2_write_en_4(bit2_write_en_4), .bit2_write_en_5(bit2_write_en_5), .bit2_write_en_6(bit2_write_en_6), .bit2_write_en_7(bit2_write_en_7),                                  .bit2_Cin_bits1(bit2_Cin_bits1), .bit2_cfg_Carry_select_Int_0(bit2_cfg_Carry_select_Int_0), .bit2_cfg_Carry_select_Int_1(bit2_cfg_Carry_select_Int_1), .bit2_O_6(bit2_O_6), .bit2_O_5(bit2_O_5), .bit2_Sum_0(bit2_Sum_0), .bit2_Sum_1(bit2_Sum_1), .bit2_Cout_lower(bit2_Cout_lower), .bit2_Sum_2(bit2_Sum_2), .bit2_Sum_3(bit2_Sum_3), .bit2_Cout_upper(bit2_Cout_upper), .bit2_cfg_sel_clb_out(bit2_cfg_sel_clb_out), .bit2_cfg_sel_Dff_out(bit2_cfg_sel_Dff_out), .bit2_dff_reset(bit2_dff_reset), .bit2_out(bit2_out), .bit2_Mem_out(bit2_Mem_out),
-    .bit3_a(bit3_a), .bit3_b(bit3_b), .bit3_c(bit3_c), .bit3_d(bit3_d), .bit3_e(bit3_e), .bit3_f(bit3_f), .bit3_Data_in(bit3_Data_in), .bit3_write_en_0(bit3_write_en_0), .bit3_write_en_1(bit3_write_en_1), .bit3_write_en_2(bit3_write_en_2), .bit3_write_en_3(bit3_write_en_3), .bit3_write_en_4(bit3_write_en_4), .bit3_write_en_5(bit3_write_en_5), .bit3_write_en_6(bit3_write_en_6), .bit3_write_en_7(bit3_write_en_7),                                  .bit3_Cin_bits1(bit3_Cin_bits1), .bit3_cfg_Carry_select_Int_0(bit3_cfg_Carry_select_Int_0), .bit3_cfg_Carry_select_Int_1(bit3_cfg_Carry_select_Int_1), .bit3_O_6(bit3_O_6), .bit3_O_5(bit3_O_5), .bit3_Sum_0(bit3_Sum_0), .bit3_Sum_1(bit3_Sum_1), .bit3_Cout_lower(bit3_Cout_lower), .bit3_Sum_2(bit3_Sum_2), .bit3_Sum_3(bit3_Sum_3), .bit3_Cout_upper(bit3_Cout_upper), .bit3_cfg_sel_clb_out(bit3_cfg_sel_clb_out), .bit3_cfg_sel_Dff_out(bit3_cfg_sel_Dff_out), .bit3_dff_reset(bit3_dff_reset), .bit3_out(bit3_out), .bit3_Mem_out(bit3_Mem_out),
-    .bit4_a(bit4_a), .bit4_b(bit4_b), .bit4_c(bit4_c), .bit4_d(bit4_d), .bit4_e(bit4_e), .bit4_f(bit4_f), .bit4_Data_in(bit4_Data_in), .bit4_write_en_0(bit4_write_en_0), .bit4_write_en_1(bit4_write_en_1), .bit4_write_en_2(bit4_write_en_2), .bit4_write_en_3(bit4_write_en_3), .bit4_write_en_4(bit4_write_en_4), .bit4_write_en_5(bit4_write_en_5), .bit4_write_en_6(bit4_write_en_6), .bit4_write_en_7(bit4_write_en_7),                                  .bit4_Cin_bits1(bit4_Cin_bits1), .bit4_cfg_Carry_select_Int_0(bit4_cfg_Carry_select_Int_0), .bit4_cfg_Carry_select_Int_1(bit4_cfg_Carry_select_Int_1), .bit4_O_6(bit4_O_6), .bit4_O_5(bit4_O_5), .bit4_Sum_0(bit4_Sum_0), .bit4_Sum_1(bit4_Sum_1), .bit4_Cout_lower(bit4_Cout_lower), .bit4_Sum_2(bit4_Sum_2), .bit4_Sum_3(bit4_Sum_3), .bit4_Cout_upper(bit4_Cout_upper), .bit4_cfg_sel_clb_out(bit4_cfg_sel_clb_out), .bit4_cfg_sel_Dff_out(bit4_cfg_sel_Dff_out), .bit4_dff_reset(bit4_dff_reset), .bit4_out(bit4_out), .bit4_Mem_out(bit4_Mem_out),
-    .bit5_a(bit5_a), .bit5_b(bit5_b), .bit5_c(bit5_c), .bit5_d(bit5_d), .bit5_e(bit5_e), .bit5_f(bit5_f), .bit5_Data_in(bit5_Data_in), .bit5_write_en_0(bit5_write_en_0), .bit5_write_en_1(bit5_write_en_1), .bit5_write_en_2(bit5_write_en_2), .bit5_write_en_3(bit5_write_en_3), .bit5_write_en_4(bit5_write_en_4), .bit5_write_en_5(bit5_write_en_5), .bit5_write_en_6(bit5_write_en_6), .bit5_write_en_7(bit5_write_en_7),                                  .bit5_Cin_bits1(bit5_Cin_bits1), .bit5_cfg_Carry_select_Int_0(bit5_cfg_Carry_select_Int_0), .bit5_cfg_Carry_select_Int_1(bit5_cfg_Carry_select_Int_1), .bit5_O_6(bit5_O_6), .bit5_O_5(bit5_O_5), .bit5_Sum_0(bit5_Sum_0), .bit5_Sum_1(bit5_Sum_1), .bit5_Cout_lower(bit5_Cout_lower), .bit5_Sum_2(bit5_Sum_2), .bit5_Sum_3(bit5_Sum_3), .bit5_Cout_upper(bit5_Cout_upper), .bit5_cfg_sel_clb_out(bit5_cfg_sel_clb_out), .bit5_cfg_sel_Dff_out(bit5_cfg_sel_Dff_out), .bit5_dff_reset(bit5_dff_reset), .bit5_out(bit5_out), .bit5_Mem_out(bit5_Mem_out),
-    .bit6_a(bit6_a), .bit6_b(bit6_b), .bit6_c(bit6_c), .bit6_d(bit6_d), .bit6_e(bit6_e), .bit6_f(bit6_f), .bit6_Data_in(bit6_Data_in), .bit6_write_en_0(bit6_write_en_0), .bit6_write_en_1(bit6_write_en_1), .bit6_write_en_2(bit6_write_en_2), .bit6_write_en_3(bit6_write_en_3), .bit6_write_en_4(bit6_write_en_4), .bit6_write_en_5(bit6_write_en_5), .bit6_write_en_6(bit6_write_en_6), .bit6_write_en_7(bit6_write_en_7),                                  .bit6_Cin_bits1(bit6_Cin_bits1), .bit6_cfg_Carry_select_Int_0(bit6_cfg_Carry_select_Int_0), .bit6_cfg_Carry_select_Int_1(bit6_cfg_Carry_select_Int_1), .bit6_O_6(bit6_O_6), .bit6_O_5(bit6_O_5), .bit6_Sum_0(bit6_Sum_0), .bit6_Sum_1(bit6_Sum_1), .bit6_Cout_lower(bit6_Cout_lower), .bit6_Sum_2(bit6_Sum_2), .bit6_Sum_3(bit6_Sum_3), .bit6_Cout_upper(bit6_Cout_upper), .bit6_cfg_sel_clb_out(bit6_cfg_sel_clb_out), .bit6_cfg_sel_Dff_out(bit6_cfg_sel_Dff_out), .bit6_dff_reset(bit6_dff_reset), .bit6_out(bit6_out), .bit6_Mem_out(bit6_Mem_out),
-    .bit7_a(bit7_a), .bit7_b(bit7_b), .bit7_c(bit7_c), .bit7_d(bit7_d), .bit7_e(bit7_e), .bit7_f(bit7_f), .bit7_Data_in(bit7_Data_in), .bit7_write_en_0(bit7_write_en_0), .bit7_write_en_1(bit7_write_en_1), .bit7_write_en_2(bit7_write_en_2), .bit7_write_en_3(bit7_write_en_3), .bit7_write_en_4(bit7_write_en_4), .bit7_write_en_5(bit7_write_en_5), .bit7_write_en_6(bit7_write_en_6), .bit7_write_en_7(bit7_write_en_7),                                  .bit7_Cin_bits1(bit7_Cin_bits1), .bit7_cfg_Carry_select_Int_0(bit7_cfg_Carry_select_Int_0), .bit7_cfg_Carry_select_Int_1(bit7_cfg_Carry_select_Int_1), .bit7_O_6(bit7_O_6), .bit7_O_5(bit7_O_5), .bit7_Sum_0(bit7_Sum_0), .bit7_Sum_1(bit7_Sum_1), .bit7_Cout_lower(bit7_Cout_lower), .bit7_Sum_2(bit7_Sum_2), .bit7_Sum_3(bit7_Sum_3), .bit7_Cout_upper(bit7_Cout_upper), .bit7_cfg_sel_clb_out(bit7_cfg_sel_clb_out), .bit7_cfg_sel_Dff_out(bit7_cfg_sel_Dff_out), .bit7_dff_reset(bit7_dff_reset), .bit7_out(bit7_out), .bit7_Mem_out(bit7_Mem_out)
+    .clk(clk), .cfg_flag(cfg_flag), .cfg_Cin_8_to_16(cfg_Cin_8_to_16), .cfg_Cin_16_to_24(cfg_Cin_16_to_24), .cfg_Cin_24_to_32(cfg_Cin_24_to_32), .Cin_8_to_16(Cin_8_to_16), .Cin_16_to_24(Cin_16_to_24), .Cin_24_to_32(Cin_24_to_32), .reset(reset),
+    .bit0_a(bit0_a), .bit0_b(bit0_b), .bit0_c(bit0_c), .bit0_d(bit0_d), .bit0_e(bit0_e), .bit0_f(bit0_f), .bit0_Data_in(bit0_Data_in), .bit0_write_en_0(bit0_write_en_0), .bit0_write_en_1(bit0_write_en_1), .bit0_write_en_2(bit0_write_en_2), .bit0_write_en_3(bit0_write_en_3), .bit0_write_en_4(bit0_write_en_4), .bit0_write_en_5(bit0_write_en_5), .bit0_write_en_6(bit0_write_en_6), .bit0_write_en_7(bit0_write_en_7), .bit0_Cin_bits0(bit0_Cin_bits0), .bit0_Cin_bits1(bit0_Cin_bits1), .bit0_cfg_Carry_select_Int_0(bit0_cfg_Carry_select_Int_0), .bit0_cfg_Carry_select_Int_1(bit0_cfg_Carry_select_Int_1), .bit0_O_6(bit0_O_6), .bit0_O_5(bit0_O_5), .bit0_Sum_0(bit0_Sum_0), .bit0_Sum_1(bit0_Sum_1), .bit0_Cout_lower(bit0_Cout_lower), .bit0_Sum_2(bit0_Sum_2), .bit0_Sum_3(bit0_Sum_3), .bit0_Cout_upper(bit0_Cout_upper), .bit0_cfg_sel_clb_out(bit0_cfg_sel_clb_out), .bit0_cfg_sel_Dff_out(bit0_cfg_sel_Dff_out), .bit0_out(bit0_out), .bit0_Mem_out(bit0_Mem_out),
+    .bit1_a(bit1_a), .bit1_b(bit1_b), .bit1_c(bit1_c), .bit1_d(bit1_d), .bit1_e(bit1_e), .bit1_f(bit1_f), .bit1_Data_in(bit1_Data_in), .bit1_write_en_0(bit1_write_en_0), .bit1_write_en_1(bit1_write_en_1), .bit1_write_en_2(bit1_write_en_2), .bit1_write_en_3(bit1_write_en_3), .bit1_write_en_4(bit1_write_en_4), .bit1_write_en_5(bit1_write_en_5), .bit1_write_en_6(bit1_write_en_6), .bit1_write_en_7(bit1_write_en_7),                                  .bit1_Cin_bits1(bit1_Cin_bits1), .bit1_cfg_Carry_select_Int_0(bit1_cfg_Carry_select_Int_0), .bit1_cfg_Carry_select_Int_1(bit1_cfg_Carry_select_Int_1), .bit1_O_6(bit1_O_6), .bit1_O_5(bit1_O_5), .bit1_Sum_0(bit1_Sum_0), .bit1_Sum_1(bit1_Sum_1), .bit1_Cout_lower(bit1_Cout_lower), .bit1_Sum_2(bit1_Sum_2), .bit1_Sum_3(bit1_Sum_3), .bit1_Cout_upper(bit1_Cout_upper), .bit1_cfg_sel_clb_out(bit1_cfg_sel_clb_out), .bit1_cfg_sel_Dff_out(bit1_cfg_sel_Dff_out), .bit1_out(bit1_out), .bit1_Mem_out(bit1_Mem_out),
+    .bit2_a(bit2_a), .bit2_b(bit2_b), .bit2_c(bit2_c), .bit2_d(bit2_d), .bit2_e(bit2_e), .bit2_f(bit2_f), .bit2_Data_in(bit2_Data_in), .bit2_write_en_0(bit2_write_en_0), .bit2_write_en_1(bit2_write_en_1), .bit2_write_en_2(bit2_write_en_2), .bit2_write_en_3(bit2_write_en_3), .bit2_write_en_4(bit2_write_en_4), .bit2_write_en_5(bit2_write_en_5), .bit2_write_en_6(bit2_write_en_6), .bit2_write_en_7(bit2_write_en_7),                                  .bit2_Cin_bits1(bit2_Cin_bits1), .bit2_cfg_Carry_select_Int_0(bit2_cfg_Carry_select_Int_0), .bit2_cfg_Carry_select_Int_1(bit2_cfg_Carry_select_Int_1), .bit2_O_6(bit2_O_6), .bit2_O_5(bit2_O_5), .bit2_Sum_0(bit2_Sum_0), .bit2_Sum_1(bit2_Sum_1), .bit2_Cout_lower(bit2_Cout_lower), .bit2_Sum_2(bit2_Sum_2), .bit2_Sum_3(bit2_Sum_3), .bit2_Cout_upper(bit2_Cout_upper), .bit2_cfg_sel_clb_out(bit2_cfg_sel_clb_out), .bit2_cfg_sel_Dff_out(bit2_cfg_sel_Dff_out), .bit2_out(bit2_out), .bit2_Mem_out(bit2_Mem_out),
+    .bit3_a(bit3_a), .bit3_b(bit3_b), .bit3_c(bit3_c), .bit3_d(bit3_d), .bit3_e(bit3_e), .bit3_f(bit3_f), .bit3_Data_in(bit3_Data_in), .bit3_write_en_0(bit3_write_en_0), .bit3_write_en_1(bit3_write_en_1), .bit3_write_en_2(bit3_write_en_2), .bit3_write_en_3(bit3_write_en_3), .bit3_write_en_4(bit3_write_en_4), .bit3_write_en_5(bit3_write_en_5), .bit3_write_en_6(bit3_write_en_6), .bit3_write_en_7(bit3_write_en_7),                                  .bit3_Cin_bits1(bit3_Cin_bits1), .bit3_cfg_Carry_select_Int_0(bit3_cfg_Carry_select_Int_0), .bit3_cfg_Carry_select_Int_1(bit3_cfg_Carry_select_Int_1), .bit3_O_6(bit3_O_6), .bit3_O_5(bit3_O_5), .bit3_Sum_0(bit3_Sum_0), .bit3_Sum_1(bit3_Sum_1), .bit3_Cout_lower(bit3_Cout_lower), .bit3_Sum_2(bit3_Sum_2), .bit3_Sum_3(bit3_Sum_3), .bit3_Cout_upper(bit3_Cout_upper), .bit3_cfg_sel_clb_out(bit3_cfg_sel_clb_out), .bit3_cfg_sel_Dff_out(bit3_cfg_sel_Dff_out), .bit3_out(bit3_out), .bit3_Mem_out(bit3_Mem_out),
+    .bit4_a(bit4_a), .bit4_b(bit4_b), .bit4_c(bit4_c), .bit4_d(bit4_d), .bit4_e(bit4_e), .bit4_f(bit4_f), .bit4_Data_in(bit4_Data_in), .bit4_write_en_0(bit4_write_en_0), .bit4_write_en_1(bit4_write_en_1), .bit4_write_en_2(bit4_write_en_2), .bit4_write_en_3(bit4_write_en_3), .bit4_write_en_4(bit4_write_en_4), .bit4_write_en_5(bit4_write_en_5), .bit4_write_en_6(bit4_write_en_6), .bit4_write_en_7(bit4_write_en_7),                                  .bit4_Cin_bits1(bit4_Cin_bits1), .bit4_cfg_Carry_select_Int_0(bit4_cfg_Carry_select_Int_0), .bit4_cfg_Carry_select_Int_1(bit4_cfg_Carry_select_Int_1), .bit4_O_6(bit4_O_6), .bit4_O_5(bit4_O_5), .bit4_Sum_0(bit4_Sum_0), .bit4_Sum_1(bit4_Sum_1), .bit4_Cout_lower(bit4_Cout_lower), .bit4_Sum_2(bit4_Sum_2), .bit4_Sum_3(bit4_Sum_3), .bit4_Cout_upper(bit4_Cout_upper), .bit4_cfg_sel_clb_out(bit4_cfg_sel_clb_out), .bit4_cfg_sel_Dff_out(bit4_cfg_sel_Dff_out), .bit4_out(bit4_out), .bit4_Mem_out(bit4_Mem_out),
+    .bit5_a(bit5_a), .bit5_b(bit5_b), .bit5_c(bit5_c), .bit5_d(bit5_d), .bit5_e(bit5_e), .bit5_f(bit5_f), .bit5_Data_in(bit5_Data_in), .bit5_write_en_0(bit5_write_en_0), .bit5_write_en_1(bit5_write_en_1), .bit5_write_en_2(bit5_write_en_2), .bit5_write_en_3(bit5_write_en_3), .bit5_write_en_4(bit5_write_en_4), .bit5_write_en_5(bit5_write_en_5), .bit5_write_en_6(bit5_write_en_6), .bit5_write_en_7(bit5_write_en_7),                                  .bit5_Cin_bits1(bit5_Cin_bits1), .bit5_cfg_Carry_select_Int_0(bit5_cfg_Carry_select_Int_0), .bit5_cfg_Carry_select_Int_1(bit5_cfg_Carry_select_Int_1), .bit5_O_6(bit5_O_6), .bit5_O_5(bit5_O_5), .bit5_Sum_0(bit5_Sum_0), .bit5_Sum_1(bit5_Sum_1), .bit5_Cout_lower(bit5_Cout_lower), .bit5_Sum_2(bit5_Sum_2), .bit5_Sum_3(bit5_Sum_3), .bit5_Cout_upper(bit5_Cout_upper), .bit5_cfg_sel_clb_out(bit5_cfg_sel_clb_out), .bit5_cfg_sel_Dff_out(bit5_cfg_sel_Dff_out), .bit5_out(bit5_out), .bit5_Mem_out(bit5_Mem_out),
+    .bit6_a(bit6_a), .bit6_b(bit6_b), .bit6_c(bit6_c), .bit6_d(bit6_d), .bit6_e(bit6_e), .bit6_f(bit6_f), .bit6_Data_in(bit6_Data_in), .bit6_write_en_0(bit6_write_en_0), .bit6_write_en_1(bit6_write_en_1), .bit6_write_en_2(bit6_write_en_2), .bit6_write_en_3(bit6_write_en_3), .bit6_write_en_4(bit6_write_en_4), .bit6_write_en_5(bit6_write_en_5), .bit6_write_en_6(bit6_write_en_6), .bit6_write_en_7(bit6_write_en_7),                                  .bit6_Cin_bits1(bit6_Cin_bits1), .bit6_cfg_Carry_select_Int_0(bit6_cfg_Carry_select_Int_0), .bit6_cfg_Carry_select_Int_1(bit6_cfg_Carry_select_Int_1), .bit6_O_6(bit6_O_6), .bit6_O_5(bit6_O_5), .bit6_Sum_0(bit6_Sum_0), .bit6_Sum_1(bit6_Sum_1), .bit6_Cout_lower(bit6_Cout_lower), .bit6_Sum_2(bit6_Sum_2), .bit6_Sum_3(bit6_Sum_3), .bit6_Cout_upper(bit6_Cout_upper), .bit6_cfg_sel_clb_out(bit6_cfg_sel_clb_out), .bit6_cfg_sel_Dff_out(bit6_cfg_sel_Dff_out), .bit6_out(bit6_out), .bit6_Mem_out(bit6_Mem_out),
+    .bit7_a(bit7_a), .bit7_b(bit7_b), .bit7_c(bit7_c), .bit7_d(bit7_d), .bit7_e(bit7_e), .bit7_f(bit7_f), .bit7_Data_in(bit7_Data_in), .bit7_write_en_0(bit7_write_en_0), .bit7_write_en_1(bit7_write_en_1), .bit7_write_en_2(bit7_write_en_2), .bit7_write_en_3(bit7_write_en_3), .bit7_write_en_4(bit7_write_en_4), .bit7_write_en_5(bit7_write_en_5), .bit7_write_en_6(bit7_write_en_6), .bit7_write_en_7(bit7_write_en_7),                                  .bit7_Cin_bits1(bit7_Cin_bits1), .bit7_cfg_Carry_select_Int_0(bit7_cfg_Carry_select_Int_0), .bit7_cfg_Carry_select_Int_1(bit7_cfg_Carry_select_Int_1), .bit7_O_6(bit7_O_6), .bit7_O_5(bit7_O_5), .bit7_Sum_0(bit7_Sum_0), .bit7_Sum_1(bit7_Sum_1), .bit7_Cout_lower(bit7_Cout_lower), .bit7_Sum_2(bit7_Sum_2), .bit7_Sum_3(bit7_Sum_3), .bit7_Cout_upper(bit7_Cout_upper), .bit7_cfg_sel_clb_out(bit7_cfg_sel_clb_out), .bit7_cfg_sel_Dff_out(bit7_cfg_sel_Dff_out), .bit7_out(bit7_out), .bit7_Mem_out(bit7_Mem_out)
 );
         
         
@@ -825,8 +817,7 @@ module tb_clb;
             // Initial conditions
             clk = 1;
         
-            {bit7_dff_reset, bit6_dff_reset, bit5_dff_reset, bit4_dff_reset,
-             bit3_dff_reset, bit2_dff_reset, bit1_dff_reset, bit0_dff_reset} = 0;
+            reset = 0;
         
             {bit7_write_en_0, bit6_write_en_0, bit5_write_en_0, bit4_write_en_0,
              bit3_write_en_0, bit2_write_en_0, bit1_write_en_0, bit0_write_en_0} = 0;
@@ -855,8 +846,7 @@ module tb_clb;
             #10;
         
             // Configuration time  reset high
-            {bit7_dff_reset, bit6_dff_reset, bit5_dff_reset, bit4_dff_reset,
-             bit3_dff_reset, bit2_dff_reset, bit1_dff_reset, bit0_dff_reset} = 8'b11111111;
+              reset = 1;
         
 //            // Enable LUT configuration addresses 0-3
 //            {bit7_write_en_0, bit6_write_en_0, bit5_write_en_0, bit4_write_en_0,
@@ -999,10 +989,10 @@ module tb_clb;
            
             #10;
             // Configuration time  reset high
-            {bit7_dff_reset, bit6_dff_reset, bit5_dff_reset, bit4_dff_reset, bit3_dff_reset, bit2_dff_reset, bit1_dff_reset, bit0_dff_reset} = 8'b00000000;
+            reset = 0;
             #10;
             // Configuration time  reset high
-            {bit7_dff_reset, bit6_dff_reset, bit5_dff_reset, bit4_dff_reset, bit3_dff_reset, bit2_dff_reset, bit1_dff_reset, bit0_dff_reset} = 8'b11111111;
+            reset = 1;
             #50;
             
            cfg_flag = 1; 
